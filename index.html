@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AguaClara Floc Modeling | Cornell Engineering</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --ac-teal: #1e7a7a;
+            --ac-light-teal: #2d9f9f;
+            --ac-dark-blue: #1a3d3d;
+            --ac-accent: #0d5252;
+            --gray-light: #f5f5f5;
+            --gray-medium: #e8e8e8;
+            --text-dark: #2c3e50;
+            --text-light: #555;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background-color: #fafafa;
+        }
+
+        /* Navigation */
+        nav {
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .nav-logo img {
+            height: 40px;
+        }
+
+        .nav-logo-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.2;
+        }
+
+        .nav-logo-text h1 {
+            font-size: 1.1rem;
+            color: var(--ac-teal);
+            font-weight: 700;
+        }
+
+        .nav-logo-text p {
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 500;
+            transition: color 0.3s;
+            cursor: pointer;
+        }
+
+        .nav-links a:hover {
+            color: var(--ac-teal);
+        }
+
+        .nav-links a.active {
+            color: var(--ac-teal);
+            border-bottom: 2px solid var(--ac-teal);
+            padding-bottom: 0.2rem;
+        }
+
+        .external-link {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-size: 0.9rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--ac-teal) 0%, var(--ac-light-teal) 100%);
+            color: white;
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            opacity: 0.95;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.8rem 2rem;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background: white;
+            color: var(--ac-teal);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        section {
+            padding: 3rem 0;
+        }
+
+        section h2 {
+            font-size: 2rem;
+            color: var(--ac-teal);
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .description-box {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            border-left: 5px solid var(--ac-teal);
+        }
+
+        .description-box p {
+            font-size: 1.05rem;
+            line-height: 1.8;
+            color: var(--text-light);
+        }
+
+        /* Members Grid */
+        .members-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .member-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .member-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.12);
+        }
+
+        .member-avatar {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, var(--ac-teal) 0%, var(--ac-light-teal) 100%);
+            border-radius: 50%;
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .member-card h3 {
+            color: var(--ac-teal);
+            margin-bottom: 0.3rem;
+        }
+
+        .member-card p {
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+
+        .member-id {
+            font-size: 0.85rem;
+            color: var(--ac-light-teal);
+            margin-top: 0.5rem;
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding: 2rem 0;
+        }
+
+        .timeline-item {
+            margin-bottom: 2rem;
+            padding-left: 3rem;
+            position: relative;
+            background: white;
+            padding: 1.5rem 1.5rem 1.5rem 3rem;
+            border-radius: 8px;
+            border-left: 3px solid var(--ac-teal);
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -8px;
+            top: 2rem;
+            width: 15px;
+            height: 15px;
+            background: var(--ac-teal);
+            border-radius: 50%;
+            border: 3px solid white;
+        }
+
+        .timeline-date {
+            color: var(--ac-teal);
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .timeline-item h4 {
+            color: var(--text-dark);
+            margin: 0.5rem 0;
+        }
+
+        .timeline-item p {
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+
+        /* Reference Section */
+        .reference-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .reference-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-top: 4px solid var(--ac-teal);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .reference-card h3 {
+            color: var(--ac-teal);
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .reference-card p {
+            color: var(--text-light);
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+        }
+
+        .formula-block {
+            background: var(--gray-light);
+            padding: 1.5rem;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 0;
+            border-bottom: 2px solid var(--gray-medium);
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .tab-button {
+            padding: 1rem 1.5rem;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--text-light);
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+
+        .tab-button:hover {
+            color: var(--ac-teal);
+        }
+
+        .tab-button.active {
+            color: var(--ac-teal);
+            border-bottom-color: var(--ac-teal);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--ac-teal);
+            color: white;
+            padding: 3rem 2rem;
+            margin-top: 4rem;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        footer h3 {
+            margin-bottom: 1rem;
+        }
+
+        footer p {
+            margin-bottom: 0.5rem;
+            opacity: 0.9;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            margin: 1.5rem 0;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            transition: opacity 0.3s;
+        }
+
+        .footer-links a:hover {
+            opacity: 0.8;
+        }
+
+        .footer-divider {
+            margin: 2rem 0;
+            opacity: 0.3;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                gap: 1rem;
+                font-size: 0.9rem;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1.1rem;
+            }
+
+            .members-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                text-align: center;
+            }
+
+            .tabs {
+                flex-direction: column;
+            }
+
+            .tab-button {
+                border-bottom: 2px solid var(--gray-medium);
+                border-left: 3px solid transparent;
+                padding-left: 1rem;
+            }
+
+            .tab-button.active {
+                border-left-color: var(--ac-teal);
+                border-bottom-color: var(--gray-medium);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <div class="nav-logo">
+                <div class="nav-logo-text">
+                    <h1>FLOC MODELING</h1>
+                    <p>Cornell AguaClara</p>
+                </div>
+            </div>
+            <ul class="nav-links">
+                <li><a onclick="showSection('home')" class="nav-link active">Home</a></li>
+                <li><a onclick="showSection('team')" class="nav-link">Team</a></li>
+                <li><a onclick="showSection('work')" class="nav-link">Work</a></li>
+                <li><a onclick="showSection('reference')" class="nav-link">Reference</a></li>
+                <li><a href="https://aguaclara-reach.github.io/Textbook/" target="_blank" class="external-link">📚 Textbook</a></li>
+                <li><a href="https://www.aguaclarareach.org/" target="_blank" class="external-link">🌍 AguaClara</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="hero" id="hero">
+        <div class="hero-content">
+            <h1>Floc Modeling</h1>
+            <p>Understanding Flocculation & Clarification in Water Treatment</p>
+            <div class="cta-buttons">
+                <a href="#" onclick="showSection('work')" class="btn btn-primary">View Our Work</a>
+                <a href="#" onclick="showSection('reference')" class="btn btn-secondary">Reference Materials</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- HOME SECTION -->
+    <section id="home-section" class="container">
+        <h2>About Floc Modeling</h2>
+        <div class="description-box">
+            <p>
+                The Floc Modeling subteam aims to further our understanding of the mechanics of floc formation 
+                and clarification through the development of mathematical models of these processes. We focus on:
+            </p>
+            <ul style="margin-top: 1rem; margin-left: 2rem; color: var(--text-light); line-height: 1.8;">
+                <li><strong>Distribution Analysis:</strong> Evaluating floc distribution within the clarifier using dye tracers</li>
+                <li><strong>Model Development:</strong> Creating and refining clarification models to better describe primary particle removal</li>
+                <li><strong>Experimental Validation:</strong> Testing theoretical models against real AguaClara plant data</li>
+                <li><strong>Saturation Assessment:</strong> Determining whether floc saturation is uniformly distributed throughout the floc filter</li>
+            </ul>
+        </div>
+
+        <div style="background: white; padding: 2rem; border-radius: 8px; margin-top: 2rem;">
+            <h3 style="color: var(--ac-teal); margin-bottom: 1.5rem;">Key Focus Areas</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                <div style="padding: 1.5rem; background: var(--gray-light); border-radius: 5px; border-left: 4px solid var(--ac-teal);">
+                    <h4 style="color: var(--ac-teal); margin-bottom: 0.5rem;">Flocculation Dynamics</h4>
+                    <p style="font-size: 0.95rem; color: var(--text-light);">Understanding how primary particles aggregate to form flocs and how coagulant affects this process</p>
+                </div>
+                <div style="padding: 1.5rem; background: var(--gray-light); border-radius: 5px; border-left: 4px solid var(--ac-teal);">
+                    <h4 style="color: var(--ac-teal); margin-bottom: 0.5rem;">Clarification Modeling</h4>
+                    <p style="font-size: 0.95rem; color: var(--text-light);">Developing mathematical models that accurately predict particle removal efficiency in clarifiers</p>
+                </div>
+                <div style="padding: 1.5rem; background: var(--gray-light); border-radius: 5px; border-left: 4px solid var(--ac-teal);">
+                    <h4 style="color: var(--ac-teal); margin-bottom: 0.5rem;">Floc Sweeping</h4>
+                    <p style="font-size: 0.95rem; color: var(--text-light);">Optimizing the floc sweeping mechanism where suspended flocs capture additional particles</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TEAM SECTION -->
+    <section id="team-section" class="container" style="display: none; padding-top: 2rem;">
+        <h2>Meet the Team</h2>
+        
+        <div class="description-box">
+            <p>
+                Our diverse team brings together expertise in fluid dynamics, chemistry, experimental design, and mathematical modeling. 
+                Together, we work to advance our understanding of water treatment processes at AguaClara.
+            </p>
+        </div>
+
+        <div class="members-grid">
+            <div class="member-card">
+                <div class="member-avatar">AG</div>
+                <h3>Alex Gardocki</h3>
+                <p>Project Lead</p>
+                <p class="member-id">rag325</p>
+            </div>
+            <div class="member-card">
+                <div class="member-avatar">LH</div>
+                <h3>Lauren Hsu</h3>
+                <p>Experimental Design</p>
+                <p class="member-id">lkh58</p>
+            </div>
+            <div class="member-card">
+                <div class="member-avatar">SP</div>
+                <h3>Sarvesh Prabhu</h3>
+                <p>Modeling & Analysis</p>
+                <p class="member-id">sp2572</p>
+            </div>
+            <div class="member-card">
+                <div class="member-avatar">AG</div>
+                <h3>Aaron Gu</h3>
+                <p>Mathematical Modeling</p>
+                <p class="member-id">ag2698</p>
+            </div>
+            <div class="member-card">
+                <div class="member-avatar">IM</div>
+                <h3>Irene Ma</h3>
+                <p>Data Analysis</p>
+                <p class="member-id">im398</p>
+            </div>
+            <div class="member-card">
+                <div class="member-avatar">AS</div>
+                <h3>Aronya Sarker</h3>
+                <p>Research & Development</p>
+                <p class="member-id">as4447</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- WORK SECTION -->
+    <section id="work-section" class="container" style="display: none; padding-top: 2rem;">
+        <h2>Our Work</h2>
+
+        <div class="tabs">
+            <button class="tab-button active" onclick="showTab(event, 'spring-2026')">Spring 2026</button>
+            <button class="tab-button" onclick="showTab(event, 'previous')">Previous Semesters</button>
+            <button class="tab-button" onclick="showTab(event, 'future')">Future Work</button>
+        </div>
+
+        <!-- Spring 2026 -->
+        <div id="spring-2026" class="tab-content active">
+            <div class="description-box">
+                <h3 style="color: var(--ac-teal); margin-bottom: 1rem;">Spring 2026: Current Work</h3>
+                <p>
+                    This semester, we are focusing on evaluating the distribution of flocs within the clarifier 
+                    and refining our clarification models. Our key initiatives include:
+                </p>
+            </div>
+
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-date">Ongoing</div>
+                    <h4>Dye Tracer Experiments</h4>
+                    <p>
+                        Using methylene blue dye tracers to visualize and track floc formation and movement 
+                        within the mini clarifier. This allows us to observe whether floc saturation varies 
+                        with height and position in the clarifier.
+                    </p>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-date">Ongoing</div>
+                    <h4>Discretized Clarification Model Development</h4>
+                    <p>
+                        Developing a new discretized model that divides the floc filter into discrete boxes, 
+                        each containing a single floc. This approach provides improved spatial resolution compared 
+                        to continuous models.
+                    </p>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-date">Completed</div>
+                    <h4>Clarifier Design Improvements</h4>
+                    <p>
+                        Revised the mini clarifier design to address leakage issues and improve experimental 
+                        reliability. Changes include: added lip for better acrylic seal, downward-sloping floc hopper, 
+                        and removal of side sampling ports.
+                    </p>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-date">Completed</div>
+                    <h4>Model Fitting & Validation</h4>
+                    <p>
+                        Fitted both the Coupled Flocculation-Sedimentation model and the new Discretized 
+                        Clarification model to plant operation data from AguaClara facilities in Nicaragua.
+                    </p>
+                </div>
+            </div>
+
+            <div style="background: var(--gray-light); padding: 1.5rem; border-radius: 8px; margin-top: 2rem;">
+                <h4 style="color: var(--ac-teal); margin-bottom: 1rem;">Key Results</h4>
+                <ul style="margin-left: 1.5rem; color: var(--text-light);">
+                    <li><strong>Coupled Model RMSE:</strong> 0.1867 NTU (better at effluent prediction)</li>
+                    <li><strong>Discretized Model RMSE:</strong> 0.2299 NTU (better at coagulant dosage prediction)</li>
+                    <li><strong>Challenge:</strong> Both models predict extremely high coagulant coverage at low turbidities, suggesting missing mechanisms</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Previous Semesters -->
+        <div id="previous" class="tab-content">
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-date">Fall 2025</div>
+                    <h4>Dye Tracer Research & Clarifier Redesign</h4>
+                    <p>
+                        Evaluated Red-40 and methylene blue dyes for floc visualization. Determined that methylene 
+                        blue (cationic) works best as it adsorbs to kaolin clay before flocculation. Identified design 
+                        issues in mini clarifier and began implementing improvements.
+                    </p>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-date">Spring 2025</div>
+                    <h4>Continuous Clarification Model Refinement</h4>
+                    <p>
+                        Revised the existing continuous clarification model by introducing the nc parameter to account 
+                        for multiple internal collisions between primary particles and flocs. Enhanced coagulant coverage 
+                        calculations using the k' conversion constant.
+                    </p>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-date">Summer 2024 - Spring 2025</div>
+                    <h4>Foundation & Initial Development</h4>
+                    <p>
+                        Established baseline clarification models and experimental systems. Developed the low hydraulic 
+                        residence time mini clarifier design that serves as the foundation for current experiments.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Future Work -->
+        <div id="future" class="tab-content">
+            <div class="description-box">
+                <h3 style="color: var(--ac-teal); margin-bottom: 1rem;">Upcoming Priorities</h3>
+            </div>
+
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-date">Next Semester</div>
+                    <h4>Complete Dye Tracer Experiments</h4>
+                    <p>
+                        Execute full experimental runs with methylene blue-dyed flocs to qualitatively and quantitatively 
+                        assess floc distribution within the clarifier. Use image analysis to track spatial variations.
+                    </p>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-date">Next Semester</div>
+                    <h4>Resolve Coagulant Coverage Issue</h4>
+                    <p>
+                        Investigate why both models predict unrealistically high coagulant coverage at lower turbidities. 
+                        Possible explanations include coagulant particles failing to encounter primary particles or 
+                        remaining in suspension. This may require model modifications.
+                    </p>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-date">Future</div>
+                    <h4>Model Validation with Effluent Data</h4>
+                    <p>
+                        Obtain more comprehensive plant operation data that includes effluent turbidity measurements. 
+                        This will allow more robust model fitting and reduce assumptions about target clarification.
+                    </p>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-date">Future</div>
+                    <h4>Advanced Optimization Methods</h4>
+                    <p>
+                        Explore global optimization methods and parameter consolidation strategies to improve model 
+                        fitting efficiency and ensure we find truly optimal parameter sets.
+                    </p>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-date">Future</div>
+                    <h4>Plate Settler Integration</h4>
+                    <p>
+                        Incorporate lamellar sedimentation (plate settlers) more thoroughly into models, recognizing 
+                        their importance in achieving clarified effluent below 1 NTU.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- REFERENCE SECTION -->
+    <section id="reference-section" class="container" style="display: none; padding-top: 2rem;">
+        <h2>Reference Materials</h2>
+
+        <div class="tabs">
+            <button class="tab-button active" onclick="showTab(event, 'formulas')">Key Formulas</button>
+            <button class="tab-button" onclick="showTab(event, 'variables')">Variable Definitions</button>
+            <button class="tab-button" onclick="showTab(event, 'concepts')">Core Concepts</button>
+        </div>
+
+        <!-- Formulas -->
+        <div id="formulas" class="tab-content active">
+            <div class="reference-grid">
+                <div class="reference-card">
+                    <h3>Discretized Floc Filter Model</h3>
+                    <p>Primary particle concentration after clarification using discrete box approach:</p>
+                    <div class="formula-block">
+C_p,clarified = C_p,flocculated 
+    × [1 - απ(3φ_floc/4π)^(2/3)]^(h_floc_filter/Λ)
+                    </div>
+                    <p style="font-size: 0.85rem;">Spring 2026 discretized model accounting for spatial variations</p>
+                </div>
+
+                <div class="reference-card">
+                    <h3>Spring 2025 Continuous Model</h3>
+                    <p>Exponential formulation for particle removal:</p>
+                    <div class="formula-block">
+C_clarified = C_flocculated 
+    × exp[-k_c α_c h_floc_filter]
+                    </div>
+                    <p style="font-size: 0.85rem;">where k_c = πr²_floc × C_floc / m_floc</p>
+                </div>
+
+                <div class="reference-card">
+                    <h3>Attachment Efficiency</h3>
+                    <p>Three-component decomposition:</p>
+                    <div class="formula-block">
+α = α_div × α_sat × α_coag
+
+α_sat = β(1 - P_sat)^(2/3)
+α_coag = 1 - (1 - Γ̃)²
+                    </div>
+                </div>
+
+                <div class="reference-card">
+                    <h3>Coagulant Coverage</h3>
+                    <p>Fractional coverage accounting for overlaps:</p>
+                    <div class="formula-block">
+Γ̃ = 1 - (1 - r²_coag/(4r²_clay))^(R_clay × N_per_clay)
+                    </div>
+                </div>
+
+                <div class="reference-card">
+                    <h3>Floc Saturation</h3>
+                    <p>Saturation as steady-state balance:</p>
+                    <div class="formula-block">
+P_sat = (C_P,flocculated - C_P) / (q(C_P,0 - C_P))
+                    </div>
+                </div>
+
+                <div class="reference-card">
+                    <h3>Coupled Flocculation-Sedimentation</h3>
+                    <p>Pennock et al. (2023) model:</p>
+                    <div class="formula-block">
+C_P = (2π k₀ exp(κ(1-v_c/v_t,0)) α̅ G̃ θ 
+    × (ρ_P × π/6)^(-2/3) 
+    + C_P,0^(-2/3))^(-3/2)
+                    </div>
+                </div>
+            </div>
+
+            <div class="description-box" style="margin-top: 2rem;">
+                <h3 style="color: var(--ac-teal); margin-bottom: 1rem;">Model Equivalence</h3>
+                <p>
+                    The discretized and continuous Spring 2025 models are mathematically equivalent through first-order 
+                    Taylor series approximation. Using Taylor series expansion on the discretized model:
+                </p>
+                <div class="formula-block" style="margin: 1rem 0;">
+Discretized ≈ e^0.027 × Continuous = 1.03 × Continuous
+                </div>
+                <p>
+                    This means they produce essentially identical results but offer different computational advantages. 
+                    The discretized approach excels at spatial analysis while the continuous form simplifies computation.
+                </p>
+            </div>
+        </div>
+
+        <!-- Variables -->
+        <div id="variables" class="tab-content">
+            <div style="background: white; padding: 2rem; border-radius: 8px;">
+                <h3 style="color: var(--ac-teal); margin-bottom: 1.5rem;">Particle Concentrations & Removal</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem;">
+                    <div style="padding: 1rem; border-left: 3px solid var(--ac-teal);">
+                        <strong>C_P,0</strong> — Primary particle concentration in raw influent
+                    </div>
+                    <div style="padding: 1rem; border-left: 3px solid var(--ac-teal);">
+                        <strong>C_P(h)</strong> — Primary particle concentration at height h in clarifier
+                    </div>
+                    <div style="padding: 1rem; border-left: 3px solid var(--ac-teal);">
+                        <strong>C_P,flocculated</strong> — Primary particle concentration after flocculation
+                    </div>
+                    <div style="padding: 1rem; border-left: 3px solid var(--ac-teal);">
+                        <strong>C_P,clarified</strong> — Primary particle concentration after clarification
+                    </div>
+                    <div style="padding: 1rem; border-left: 3px solid var(--ac-teal);">
+                        <strong>C_removed</strong> — Concentration of particles removed in a discrete layer
+                    </div>
+                    <div style="padding: 1rem; border-left: 3px solid var(--ac-teal);">
+                        <strong>*pC</strong> — Particle removal efficiency (negative log ratio)
+                    </div>
+                </div>
+
+                <h3 style="color: var(--ac-teal); margin-bottom: 1.5rem; margin-top: 2rem;">Floc Properties</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem;">
+                    <div style="padding: 1rem; border-left: 3px solid var(--ac-teal);">
+                        <strong>r_floc</strong> — Radius of a floc (1-5 mm typically)
+                    </div>
+                    <div style="padding: 1rem; border-left: 3px solid var(--ac-teal);">
+                        <strong>m_floc</strong> — Mass of an individual floc
+                    </div>
+                    <div style="padding: 1rem; border-left: 3px solid var(--ac-teal);">
+                        <strong>C_floc</strong> — Concentration (number density) of flocs
+                    </div>
+                    <div style="padding: 1rem; border-left: 3px solid var(--ac-teal);">
+                        <strong>φ_floc</strong> — Volume fraction of flocs in clarifier (≈ 0.0065)
+                    </div>
+                    <div style="padding: 1rem; border-left: 3px solid var(--ac-teal);">
+                        <strong>P_sat</strong> — Floc saturation (fraction of pores filled)
+                    </div>
+                    <div style="padding: 1rem; border-left: 3px solid var(--ac-teal);">
+                        <strong>Λ</strong> — Separation distance between flocs
+                    </div>
+                </div>
+
+                <h3 style="color: var(--ac-teal); margin-bottom: 1.5rem; margin-top: 2rem;">Coagulant & Chemistry</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem;">
+                    <div style="padding: 1rem; border-left: 3px solid var(--ac-teal);">
+                        <strong>C_coag</strong> — Total coagulant concentration (typically PACl)
+                    </div>
+                    <div style="padding: 1rem; border-left: 3px solid var(--ac-teal);">
+                        <strong>C_coag(aq)</strong> — Coagulant concentration remaining in solution
+                    </div>
+                    <div style="padding: 1rem; border-left: 3px solid var(--ac-teal);">
+                        <strong>C_coag(DOM)</strong> — Coagulant bound to dissolved organic matter
+                    </div>
+                    <div style="padding: 1rem; border-left: 3px solid var(--ac-teal);">
+                        <strong>N_per_clay</strong> — Number of coagulant nanoparticles per clay particle
+                    </div>
+                    <div style="padding: 1rem; border-left: 3px solid var(--ac-teal);">
+                        <strong>Γ̃</strong> — True fractional coagulant coverage
+                    </div>
+                    <div style="padding: 1rem; border-left: 3px solid var(--ac-teal);">
+                        <strong>r_coag</strong> — Radius of coagulant nanoparticle
+                    </div>
+                </div>
+
+                <h3 style="color: var(--ac-teal); margin-bottom: 1.5rem; margin-top: 2rem;">Efficiency & Hydraulic Parameters</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem;">
+                    <div style="padding: 1rem; border-left: 3px solid var(--ac-teal);">
+                        <strong>α</strong> — Attachment efficiency (probability of successful collision)
+                    </div>
+                    <div style="padding: 1rem; border-left: 3px solid var(--ac-teal);">
+                        <strong>α_div</strong> — Fluid deflection component
+                    </div>
+                    <div style="padding: 1rem; border-left: 3px solid var(--ac-teal);">
+                        <strong>α_sat</strong> — Saturation component
+                    </div>
+                    <div style="padding: 1rem; border-left: 3px solid var(--ac-teal);">
+                        <strong>α_coag</strong> — Coagulant coverage component
+                    </div>
+                    <div style="padding: 1rem; border-left: 3px solid var(--ac-teal);">
+                        <strong>h_floc_filter</strong> — Height of floc filter (≈ 71 cm typical)
+                    </div>
+                    <div style="padding: 1rem; border-left: 3px solid var(--ac-teal);">
+                        <strong>v_c</strong> — Clarifier capture velocity (0.12 mm/s AguaClara standard)
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Concepts -->
+        <div id="concepts" class="tab-content">
+            <div class="reference-grid">
+                <div class="reference-card">
+                    <h3>Flocculation</h3>
+                    <p>
+                        Process where coagulant-destabilized primary particles collide and aggregate to form larger, 
+                        settleable flocs. Energy dissipation in the flocculator creates velocity gradients that promote collisions.
+                    </p>
+                </div>
+
+                <div class="reference-card">
+                    <h3>Clarification</h3>
+                    <p>
+                        Process following flocculation where flocs are separated from treated water through settling and 
+                        floc sweeping. AguaClara uses floc sweeping where suspended flocs capture additional particles.
+                    </p>
+                </div>
+
+                <div class="reference-card">
+                    <h3>Floc Sweeping</h3>
+                    <p>
+                        Mechanism using vertical water jets to maintain suspended flocs as a "floc filter." Primary particles 
+                        travel upward through this suspension, colliding with flocs and being captured.
+                    </p>
+                </div>
+
+                <div class="reference-card">
+                    <h3>Floc Saturation</h3>
+                    <p>
+                        Measurement of how "full" a floc is - how many primary particles it has captured relative to its capacity. 
+                        Saturated flocs are less effective at capturing additional particles.
+                    </p>
+                </div>
+
+                <div class="reference-card">
+                    <h3>Attachment Efficiency</h3>
+                    <p>
+                        Probability that a collision between a primary particle and a floc results in permanent attachment. 
+                        Depends on coagulant coverage, floc saturation, and fluid dynamics.
+                    </p>
+                </div>
+
+                <div class="reference-card">
+                    <h3>Coagulation</h3>
+                    <p>
+                        Process where coagulant (typically PACl) destabilizes suspended colloidal particles by neutralizing their 
+                        charge, allowing them to approach closely enough to aggregate into flocs.
+                    </p>
+                </div>
+
+                <div class="reference-card">
+                    <h3>Methylene Blue Tracing</h3>
+                    <p>
+                        Cationic dye that adsorbs strongly to negatively charged kaolin clay particles. By mixing dye with clay 
+                        before coagulation, we create visibly distinguished tracer flocs for spatial analysis.
+                    </p>
+                </div>
+
+                <div class="reference-card">
+                    <h3>Plate Settlers</h3>
+                    <p>
+                        Lamellar sedimentation structure with parallel plates that captures smaller particles escaping the floc 
+                        filter and recycles solids back, enabling effluent turbidity below 1 NTU.
+                    </p>
+                </div>
+
+                <div class="reference-card">
+                    <h3>Primary Particles</h3>
+                    <p>
+                        Individual clay, silt, or other particles in raw water that need to be removed. Typically much smaller 
+                        than flocs (~ microns). Cannot settle quickly without flocculation.
+                    </p>
+                </div>
+
+                <div class="reference-card">
+                    <h3>Turbidity</h3>
+                    <p>
+                        Measure of water clarity - amount of suspended particles. 1 NTU ≈ 1.47 mg/L kaolin clay equivalent. 
+                        Goal is to reduce raw water turbidity from hundreds of NTU to < 1 NTU.
+                    </p>
+                </div>
+
+                <div class="reference-card">
+                    <h3>Velocity Gradient (G)</h3>
+                    <p>
+                        Rate at which fluid velocity changes in space. Higher gradients promote more collisions between particles. 
+                        Controlled in flocculator design through geometry and flow rate.
+                    </p>
+                </div>
+
+                <div class="reference-card">
+                    <h3>Hydraulic Residence Time (θ)</h3>
+                    <p>
+                        Average time a water particle spends in a reactor. Balance needed: long enough for flocs to form and settle, 
+                        but short enough for practical plant operation.
+                    </p>
+                </div>
+            </div>
+
+            <div class="description-box" style="margin-top: 2rem;">
+                <h3 style="color: var(--ac-teal); margin-bottom: 1rem;">Richardson & Zaki Theory</h3>
+                <p>
+                    Our discretized floc filter model connections to classical sedimentation theory through particle separation distances. 
+                    Richardson and Zaki (1954) derived drag force relationships for particles in suspension by modeling each particle 
+                    within a hexagonal cell. This provides theoretical grounding for how floc concentration affects particle trajectories.
+                </p>
+                <div class="formula-block" style="margin: 1rem 0;">
+R = 1.126 × (b/C)^(1/3)
+
+where R is cell radius, b is particle radius, and C is concentration
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <h3>Floc Modeling Subteam</h3>
+            <p>Cornell University Civil & Environmental Engineering</p>
+            <p>Part of <a href="https://www.aguaclarareach.org/" target="_blank">AguaClara</a> | Spring 2026 Final Report</p>
+            
+            <div class="footer-links">
+                <a href="https://aguaclara-reach.github.io/Textbook/" target="_blank">📚 AguaClara Textbook</a>
+                <a href="https://www.aguaclarareach.org/" target="_blank">🌍 AguaClara Main Site</a>
+                <a href="https://github.com/AguaClara" target="_blank">💻 GitHub</a>
+            </div>
+            
+            <div class="footer-divider">━━━━━━━━━━━━━━━━━━━━━━━</div>
+            
+            <p>Last Updated: May 2026 | Contact: floc-modeling@aguaclara.org</p>
+        </div>
+    </footer>
+
+    <script>
+        function showSection(sectionName) {
+            // Hide all sections
+            document.getElementById('home-section').style.display = 'none';
+            document.getElementById('team-section').style.display = 'none';
+            document.getElementById('work-section').style.display = 'none';
+            document.getElementById('reference-section').style.display = 'none';
+
+            // Remove active class from all nav links
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+
+            // Show selected section
+            if (sectionName === 'home') {
+                document.getElementById('home-section').style.display = 'block';
+            } else if (sectionName === 'team') {
+                document.getElementById('team-section').style.display = 'block';
+            } else if (sectionName === 'work') {
+                document.getElementById('work-section').style.display = 'block';
+            } else if (sectionName === 'reference') {
+                document.getElementById('reference-section').style.display = 'block';
+            }
+
+            // Add active class to clicked link
+            event.target.classList.add('active');
+
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+
+        function showTab(evt, tabName) {
+            // Hide all tab contents
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(content => {
+                content.classList.remove('active');
+            });
+
+            // Remove active class from all tab buttons
+            const tabButtons = evt.currentTarget.parentElement.querySelectorAll('.tab-button');
+            tabButtons.forEach(button => {
+                button.classList.remove('active');
+            });
+
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            evt.currentTarget.classList.add('active');
+        }
+
+        // Initialize home section as active
+        window.addEventListener('load', () => {
+            document.getElementById('home-section').style.display = 'block';
+            document.querySelector('[onclick*="home"]').classList.add('active');
+        });
+    </script>
+</body>
+</html>
