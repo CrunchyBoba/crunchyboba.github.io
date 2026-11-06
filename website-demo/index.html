@@ -179,7 +179,7 @@ button.chip{min-height:40px}
 .legend div{display:flex;gap:12px;align-items:flex-start}
 .legend i{width:14px;height:14px;border-radius:4px;flex:0 0 auto;margin-top:4px}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
-@media (max-width:900px){.two{grid-template-columns:1fr}}
+@media (max-width:900px){.two{grid-template-columns:minmax(0,1fr)!important}}
 
 /* list once diagram */
 .flow{display:grid;grid-template-columns:1fr auto 1fr;gap:24px;align-items:center}
@@ -190,7 +190,7 @@ button.chip{min-height:40px}
 .node.core span{color:#F6D9D5}
 .outs{display:grid;gap:14px}
 .arrows{display:flex;flex-direction:column;gap:46px;color:var(--brand)}
-@media (max-width:800px){.flow{grid-template-columns:1fr}.arrows{display:none}}
+@media (max-width:800px){.flow{grid-template-columns:minmax(0,1fr)!important}.arrows{display:none!important}}
 
 /* who we serve */
 .serve{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
@@ -249,7 +249,7 @@ th{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--mute
 .yy b{display:block;font-size:12px;letter-spacing:.08em;color:var(--brand);margin-bottom:4px}
 .pills{display:flex;flex-wrap:wrap;gap:8px}
 .pills span{background:var(--bg);border:1px solid var(--line);border-radius:99px;padding:7px 13px;font-size:13.5px;font-weight:600}
-@media (max-width:900px){.hiw{grid-template-columns:1fr}.toc{position:static;flex-direction:row;overflow-x:auto}.toc button{white-space:nowrap}.yy{grid-template-columns:1fr}.panel2{padding:24px}}
+@media (max-width:900px){.hiw{grid-template-columns:minmax(0,1fr)}.toc{position:static;flex-direction:row;overflow-x:auto}.toc button{white-space:nowrap}.yy{grid-template-columns:1fr}.panel2{padding:24px}}
 
 /* industry page */
 .ihero{position:relative;color:#fff;min-height:440px;display:flex;align-items:flex-end}
@@ -433,6 +433,7 @@ var IND={
   steps:[['Launch','Brand and configure your marketplace.'],['Onboard members','Invite and approve sellers and buyers.'],['Grow trade','Members buy and sell with each other.'],['Report impact','Share results with your board and funders.']],
   fit:['Chambers of commerce','Industry cooperatives','Universities and academic institutions','Trade organizations','Economic development groups','Family-business initiatives']}
 };
+var TAGS={restaurants:'Ordering, inventory and vendors in one place',distributors:'Turn your catalog into repeat sales',farms:'Sell seasonal products to local buyers',founders:'Find your first wholesale buyers',grocery:'Source new regional brands',services:'Reach food businesses that need you',chambers:'Run a marketplace for your members'};
 var INDK=['restaurants','distributors','farms','founders','grocery','services','chambers'];
 
 var SUP=[
@@ -457,7 +458,7 @@ function money(n){return '$'+n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',')}
 function toast(m){var t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(function(){t.classList.remove('show')},2800)}
 
 /* ---------- nav dropdowns ---------- */
-$('#ddhow').innerHTML='<a href="#how"><img src="'+img('1606787366850-de6330128bfc',120)+'" alt=""><div><b>How SupplyBistro works</b><span>Seven things worth knowing, in one place</span></div></a><div class="sep" style="grid-column:1/-1"></div>'+
+$('#ddhow').innerHTML='<a href="#how"><img src="'+img('1606787366850-de6330128bfc',120)+'" alt=""><div><b>How SupplyBistro works</b><span>What changes for sellers and buyers</span></div></a><div class="sep" style="grid-column:1/-1"></div>'+
  INDK.map(function(k){var d=IND[k];return '<a href="#industry-'+k+'"><img src="'+img(d.img,120)+'" alt=""><div><b>'+d.name+'</b><span>'+d.short.split(',')[0]+'</span></div></a>'}).join('');
 $('#ddmk').innerHTML='<a href="#cornell"><img src="'+img('1541339907198-e08756dedf3f',120)+'" alt=""><div><b>Cornell Marketplace</b><span>Powered by SupplyBistro</span></div></a><a href="#marketplaces"><img src="'+img('1498837167922-ddd27525d352',120)+'" alt=""><div><b>All marketplaces &amp; partners</b><span>Fancy Food Marketplace, Smith Family Business Initiative</span></div></a><a href="#suppliers"><img src="'+img('1586528116311-ad8dd3c8310d',120)+'" alt=""><div><b>Find suppliers</b><span>Wholesale catalogs and quotes</span></div></a><div class="sep"></div><a href="#industry-chambers"><img src="'+img('1556761175-5973dc0f32e7',120)+'" alt=""><div><b>Run your own marketplace</b><span>For chambers, universities and associations</span></div></a>';
 function closeDD(){document.querySelectorAll('.dd').forEach(function(d){d.classList.remove('open');d.querySelector('button').setAttribute('aria-expanded','false')})}
@@ -528,7 +529,7 @@ function how(){
   var h=HIW[S.hiw];
   return '<section class="ihero" style="min-height:380px"><img src="'+img('1466637574441-749b8f19452f',1800)+'" alt="Cooking in a professional kitchen"><div class="wrap"><p class="eyebrow" style="color:#F3C77B">How it works</p><h1>Sell to more clients. Buy from people you can see. Keep more of every order.</h1><p class="lead">What changes for you as a seller, and as a buyer.</p></div></section>'+
   '<section class="band"><div class="wrap hiw"><nav class="toc" aria-label="How it works sections">'+HIW.map(function(x,i){return '<button class="'+(i===S.hiw?'on':'')+'" data-hiw="'+i+'"><span>'+(i+1)+'</span>'+x[0]+'</button>'}).join('')+'</nav>'+
-  '<div class="panel2"><p class="eyebrow">'+(S.hiw+1)+' of 7</p><h2 class="h2">'+h[0]+'</h2><p class="lead">'+h[1]+'</p><div class="yy"><div><b>YOU SELL</b>'+h[2]+'</div><div><b>YOU BUY</b>'+h[3]+'</div></div>'+h[4]()+
+  '<div class="panel2"><p class="eyebrow">'+(S.hiw+1)+' of '+HIW.length+'</p><h2 class="h2">'+h[0]+'</h2><p class="lead">'+h[1]+'</p><div class="yy"><div><b>YOU SELL</b>'+h[2]+'</div><div><b>YOU BUY</b>'+h[3]+'</div></div>'+h[4]()+
   '<div class="row" style="justify-content:space-between;margin-top:30px">'+(S.hiw>0?'<button class="btn ghost sm" data-hiw="'+(S.hiw-1)+'">← '+HIW[S.hiw-1][0]+'</button>':'<span></span>')+(S.hiw<HIW.length-1?'<button class="btn primary sm" data-hiw="'+(S.hiw+1)+'">'+HIW[S.hiw+1][0]+' →</button>':'<a class="btn primary sm" href="#start">Get started</a>')+'</div></div></div></section>'+
   cta();
 }
