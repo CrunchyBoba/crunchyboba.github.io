@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SupplyBistro — Redesign Demo (Sentinel style)</title>
+<meta name="description" content="Demo redesign of SupplyBistro: the B2B marketplace and network for food and beverage businesses.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://images.unsplash.com">
+<link href="https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0B0E12;--surface:#12171D;--alt:#0F1318;--ink:#ECEEF0;--muted:#99A2AC;--line:#20272F;--line2:#2E3742;
+  --brand:#4FD1A1;--brand2:#6FE0B7;--brand-soft:rgba(79,209,161,.12);--sage:#4FD1A1;--sage-soft:rgba(79,209,161,.12);--gold:#E8C26A;--red:#C9403F;
+  --radius:20px;--shadow:0 1px 0 rgba(255,255,255,.04) inset,0 20px 50px rgba(0,0,0,.35);
+  --h:Switzer,-apple-system,'Helvetica Neue',Arial,sans-serif;--b:Switzer,-apple-system,'Helvetica Neue',Arial,sans-serif;--mono:'DM Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 var(--b);-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:var(--h);margin:0;line-height:1.12;letter-spacing:-.02em}
+a{color:var(--brand)}
+button{font:inherit;cursor:pointer}
+img{display:block;max-width:100%}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.wrap{max-width:1240px;margin:0 auto;padding:0 24px}
+.muted{color:var(--muted)}
+.eyebrow{font:800 12px/1 var(--b);letter-spacing:.14em;text-transform:uppercase;color:var(--brand);margin:0 0 14px}
+.lead{font-size:18px;color:var(--muted);max-width:640px;margin:16px 0 0}
+section.band{padding:88px 0}
+.band.alt{background:var(--alt)}
+.band.dark{background:var(--brand-soft);color:var(--ink)}
+.band.dark .muted{color:#BDB3A8}
+.sechead{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:20px;margin-bottom:36px}
+.sechead h2,.h2{font-size:clamp(28px,3.4vw,44px)}
+.demobar{background:var(--brand);color:#FBEAE7;font-size:12px;text-align:center;padding:7px 12px}
+.demobar b{color:#fff}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 22px;border-radius:999px;font-weight:700;font-size:15px;text-decoration:none;border:2px solid transparent;transition:transform .12s,background .15s,border-color .15s;white-space:nowrap}
+.btn:active{transform:translateY(1px)}
+.btn.primary{background:var(--brand);color:#fff}.btn.primary:hover{background:var(--brand2)}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line2)}.btn.ghost:hover{border-color:var(--ink)}
+.btn.light{background:var(--surface);color:var(--ink)}
+.btn.outline-light{color:#fff;border-color:rgba(255,255,255,.6)}.btn.outline-light:hover{border-color:#fff;background:rgba(255,255,255,.08)}
+.btn.sm{min-height:40px;padding:0 16px;font-size:14px}
+.btn.block{width:100%}
+.row{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+
+/* nav */
+.nav{position:sticky;top:0;z-index:40;background:rgba(250,247,242,.9);backdrop-filter:saturate(1.4) blur(12px);border-bottom:1px solid var(--line)}
+.nav .bar{display:flex;align-items:center;gap:20px;height:72px}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink)}
+.logo .mk{width:38px;height:38px;border-radius:11px;background:var(--brand);color:#fff;display:grid;place-items:center;font:800 14px var(--h)}
+.logo .wd{font:700 20px var(--h);letter-spacing:-.02em}
+.menu{display:flex;align-items:center;gap:2px;margin-left:12px}
+.menu>a,.menu>.dd>button{display:flex;align-items:center;gap:6px;padding:10px 14px;border-radius:999px;color:var(--ink);text-decoration:none;font-weight:600;font-size:14.5px;background:none;border:0}
+.menu>a:hover,.menu>.dd>button:hover,.menu .on{background:#EFE7DD}
+.dd{position:relative}
+.dd .panel{position:absolute;top:calc(100% + 8px);left:0;min-width:320px;background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:10px;display:none}
+.dd.open .panel{display:block}
+.dd .panel a{display:flex;gap:12px;align-items:center;padding:10px;border-radius:12px;text-decoration:none;color:var(--ink)}
+.dd .panel a:hover{background:var(--bg)}
+.dd .panel img{width:44px;height:44px;border-radius:10px;object-fit:cover;flex:0 0 auto}
+.dd .panel b{display:block;font-size:14px}
+.dd .panel span{font-size:12.5px;color:var(--muted);line-height:1.35;display:block}
+.dd .panel .sep{height:1px;background:var(--line);margin:6px 4px}
+.dd .panel.wide{min-width:560px;display:none;grid-template-columns:1fr 1fr;gap:2px}
+.dd.open .panel.wide{display:grid}
+.navr{margin-left:auto;display:flex;gap:8px;align-items:center}
+.login{font-weight:700;color:var(--ink);text-decoration:none;padding:10px 12px}
+.burger{display:none;width:44px;height:44px;border-radius:12px;border:1px solid var(--line2);background:#fff}
+@media (max-width:1060px){.menu{display:none}.burger{display:grid;place-items:center}.login{display:none}
+  .menu.mob{display:flex;flex-direction:column;align-items:stretch;position:absolute;left:0;right:0;top:72px;background:var(--surface);border-bottom:1px solid var(--line);padding:12px 16px 20px;margin:0;max-height:calc(100vh - 72px);overflow:auto;box-shadow:var(--shadow)}
+  .menu.mob .panel,.menu.mob .panel.wide{position:static;display:grid;grid-template-columns:1fr;box-shadow:none;border:0;min-width:0;padding:0 0 8px}}
+
+/* hero */
+.hero{background:radial-gradient(900px 500px at 90% 10%,#F8E6E3,transparent 60%),var(--bg)}
+.hero .wrap{display:grid;grid-template-columns:1.1fr 1fr;gap:48px;align-items:center;padding-top:72px;padding-bottom:80px}
+.hero h1{font-size:clamp(40px,5.2vw,68px);letter-spacing:-.035em}
+.hero .vis{position:relative;min-height:540px;border-radius:32px;overflow:hidden;box-shadow:var(--shadow)}
+.hero .vis>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.hero .vis .glass{position:absolute;left:20px;right:20px;bottom:20px}
+.glass{background:rgba(255,255,255,.9);border:1px solid rgba(255,255,255,.7);backdrop-filter:blur(16px);border-radius:24px;padding:22px;color:var(--ink);box-shadow:0 12px 32px rgba(28,25,23,.14)}
+.snap h3{font-size:18px;margin-bottom:14px}
+.snap .m b{color:var(--sage)}
+.snap .m{display:grid;grid-template-columns:1fr auto;gap:6px 12px;align-items:center;margin-bottom:14px}
+.snap .m span{font-size:13px;color:var(--muted);font-weight:600}
+.snap .m b{font:800 22px var(--h)}
+.snap .bar{grid-column:1/-1;height:8px;border-radius:99px;background:#EFE7DD;overflow:hidden}
+.snap .bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#3F6B4F,#79A98A);width:0;transition:width 1.2s cubic-bezier(.2,.8,.2,1)}
+.snap .sees{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
+.snap .sees div{font-size:13px;background:var(--bg);border-radius:12px;padding:9px 11px;font-weight:600}
+.fine{font-size:11.5px;opacity:.75;margin-top:12px}
+@media (max-width:900px){.hero .wrap{grid-template-columns:1fr}.hero .vis{min-height:600px}}
+
+/* mosaic */
+.mosaic{position:relative;display:grid;grid-template-columns:1.1fr 1fr;grid-template-rows:230px 230px;gap:14px}
+.mosaic a{position:relative;border-radius:24px;overflow:hidden;display:block;box-shadow:var(--shadow)}
+.mosaic a img{width:100%;height:100%;object-fit:cover;transition:transform .6s}
+.mosaic a:hover img{transform:scale(1.05)}
+.mosaic a span{position:absolute;left:12px;bottom:12px;background:rgba(255,255,255,.94);color:var(--ink);font-weight:700;font-size:13px;border-radius:99px;padding:6px 12px}
+.mosaic .m1{grid-row:span 2}
+.mosaic .m2,.mosaic .m3,.mosaic .m4{}
+.mosaic{grid-template-rows:150px 150px 150px}
+.mosaic .m1{grid-row:1/4}.mosaic .m2{grid-row:1/2}.mosaic .m3{grid-row:2/3}.mosaic .m4{grid-row:3/4}
+.ping{position:absolute;display:flex;gap:10px;align-items:center;background:var(--surface);border-radius:16px;padding:12px 14px;box-shadow:0 14px 36px rgba(28,25,23,.16);font-size:13px;animation:float 5s ease-in-out infinite}
+.ping i{width:10px;height:10px;border-radius:99px;background:var(--sage);flex:0 0 auto}
+.ping b{display:block;font-size:13.5px}.ping span{color:var(--muted)}
+.ping.p1{left:-22px;bottom:64px}.ping.p2{right:-14px;top:-18px;animation-delay:-2.5s}
+@keyframes float{50%{transform:translateY(-6px)}}
+@media (prefers-reduced-motion:reduce){.ping{animation:none}}
+@media (max-width:900px){.ping.p1{left:8px}.ping.p2{right:8px}}
+/* before / after */
+.ba{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.bcol{border-radius:24px;padding:30px;display:flex;flex-direction:column;gap:12px}
+.bcol h3{font-size:22px;margin-bottom:6px}
+.bcol.before{background:var(--surface);border:1px solid var(--line)}
+.bcol.after{background:var(--sage);color:#fff}
+.bi{display:flex;gap:12px;align-items:center;font-size:16px;font-weight:600;padding:12px 14px;border-radius:14px}
+.before .bi{background:var(--bg);color:var(--muted)}
+.before .bi span{color:var(--brand);font-weight:900}
+.after .bi{background:rgba(255,255,255,.14)}
+.after .bi span{color:#BFE3CB;font-weight:900}
+@media (max-width:800px){.ba{grid-template-columns:1fr}}
+/* path cards */
+.paths{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.path{position:relative;border-radius:var(--radius);overflow:hidden;min-height:360px;display:flex;flex-direction:column;justify-content:flex-end;color:#fff;text-decoration:none;box-shadow:var(--shadow)}
+.path img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .6s}
+.path:hover img{transform:scale(1.05)}
+.path:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 30%,rgba(16,12,10,.86))}
+.path .c{position:relative;z-index:1;padding:26px}
+.path .tag{display:inline-block;background:var(--surface);color:var(--ink);font-weight:800;font-size:12px;border-radius:99px;padding:5px 11px;margin-bottom:12px}
+.path h3{font-size:26px;margin-bottom:8px}
+.path p{margin:0 0 14px;color:#EDE6DD}
+.path .go{font-weight:800}
+@media (max-width:900px){.paths{grid-template-columns:1fr}}
+
+/* feature marketplace */
+.feature{display:grid;grid-template-columns:1.05fr 1fr;border-radius:28px;overflow:hidden;background:var(--surface);box-shadow:var(--shadow)}
+.feature .ph{position:relative;min-height:420px}
+.feature .ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.feature .tx{padding:44px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--line2);background:var(--surface);border-radius:99px;padding:7px 14px;font-weight:600;font-size:13.5px;color:var(--ink)}
+button.chip{min-height:40px}
+.chip.on{background:var(--ink);border-color:var(--ink);color:#fff}
+@media (max-width:900px){.feature{grid-template-columns:1fr}.feature .ph{min-height:260px}}
+
+/* operating cycle */
+.cycle{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px}
+.cyc{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column}
+.cyc img{height:150px;width:100%;object-fit:cover}
+.cyc .c{padding:18px;display:flex;flex-direction:column;gap:8px;flex:1}
+.cyc h3{font-size:17px}
+.cyc p{margin:0;font-size:14px;color:var(--muted)}
+.cyc a{margin-top:auto;font-weight:700;font-size:14px;text-decoration:none}
+@media (max-width:1100px){.cycle{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.cycle{grid-template-columns:1fr}}
+
+/* story (original component) */
+.story{display:grid;grid-template-columns:1fr 1.05fr;gap:56px;align-items:center}
+.stack{background:var(--surface);border-radius:28px;padding:22px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:14px}
+.sitem{display:flex;gap:16px;align-items:center;padding:18px 20px;border:1px solid var(--line);border-left:4px solid #B9D3C1;border-radius:18px}
+.sitem .ic{width:52px;height:52px;border-radius:99px;background:var(--brand-soft);color:var(--brand);display:grid;place-items:center;flex:0 0 auto}
+.sitem h3{font-size:18px;margin-bottom:4px}
+.sitem p{margin:0;color:var(--muted);font-size:14.5px}
+@media (max-width:900px){.story{grid-template-columns:1fr}}
+
+/* margin chart (original component) */
+.mchart{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:end;max-width:640px}
+.mcol{display:flex;flex-direction:column;gap:10px}
+.mcol h4{font-size:15px;text-align:center}
+.mbar{height:340px;border-radius:16px;overflow:hidden;display:flex;flex-direction:column;box-shadow:var(--shadow)}
+.mbar div{display:flex;align-items:center;justify-content:center;text-align:center;font-weight:700;font-size:13px;padding:6px;line-height:1.3}
+.legend{display:grid;gap:14px}
+.legend div{display:flex;gap:12px;align-items:flex-start}
+.legend i{width:14px;height:14px;border-radius:4px;flex:0 0 auto;margin-top:4px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
+@media (max-width:900px){.two{grid-template-columns:1fr}}
+
+/* list once diagram */
+.flow{display:grid;grid-template-columns:1fr auto 1fr;gap:24px;align-items:center}
+.node{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:18px 20px;box-shadow:var(--shadow)}
+.node b{display:block;font-family:var(--h);font-size:17px}
+.node span{font-size:13.5px;color:var(--muted)}
+.node.core{background:var(--brand);color:#fff;border:0;text-align:center;padding:28px}
+.node.core span{color:#F6D9D5}
+.outs{display:grid;gap:14px}
+.arrows{display:flex;flex-direction:column;gap:46px;color:var(--brand)}
+@media (max-width:800px){.flow{grid-template-columns:1fr}.arrows{display:none}}
+
+/* who we serve */
+.serve{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.scard{background:var(--surface);border-radius:var(--radius);overflow:hidden;border:1px solid var(--line);display:flex;flex-direction:column;text-decoration:none;color:var(--ink);transition:transform .2s,box-shadow .2s}
+.scard:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
+.scard img{height:170px;width:100%;object-fit:cover}
+.scard .c{padding:18px;display:flex;flex-direction:column;gap:8px;flex:1}
+.scard h3{font-size:17px}
+.scard p{margin:0;font-size:14px;color:var(--muted)}
+.scard .role{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--sage)}
+.scard .go{margin-top:auto;font-weight:700;color:var(--brand);font-size:14px}
+.scard.big{grid-column:span 2;flex-direction:row}
+.scard.big img{width:50%;height:auto;min-height:240px}
+@media (max-width:1100px){.serve{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:620px){.serve{grid-template-columns:1fr}.scard.big{grid-column:auto;flex-direction:column}.scard.big img{width:100%;min-height:170px}}
+
+/* pricing */
+.tiers{display:grid;grid-template-columns:repeat(5,minmax(200px,1fr));gap:14px;overflow-x:auto;padding-bottom:6px}
+.tier{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:22px;display:flex;flex-direction:column;gap:14px;position:relative}
+.tier.hl{border:2px solid var(--brand);box-shadow:var(--shadow)}
+.tier .who{font-size:11.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--sage)}
+.tier h3{font-size:22px}
+.tier .pr{font:800 30px var(--h);letter-spacing:-.02em}
+.tier .pr small{display:block;font:600 13px var(--b);color:var(--muted);letter-spacing:0;margin-top:4px}
+.tier ul{list-style:none;margin:0;padding:0;display:grid;gap:9px;font-size:13.5px}
+.tier li{display:flex;gap:8px}
+.tier li:before{content:"";flex:0 0 16px;height:16px;margin-top:3px;border-radius:99px;background:var(--sage-soft) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233F6B4F' stroke-width='4'%3E%3Cpath d='M5 12l4 4 10-10'/%3E%3C/svg%3E") center/10px no-repeat}
+.tier .btn{margin-top:auto}
+.ribbon{position:absolute;top:-12px;left:22px;background:var(--brand);color:#fff;font-size:11.5px;font-weight:800;padding:4px 10px;border-radius:99px}
+.calc{display:grid;grid-template-columns:1fr 1.2fr;gap:36px;align-items:center;background:var(--surface);border-radius:28px;padding:36px;box-shadow:var(--shadow)}
+.calc input[type=range]{width:100%;accent-color:var(--brand)}
+.bars{display:flex;align-items:flex-end;gap:12px;height:220px;border-bottom:1px solid var(--line);padding-top:10px}
+.bars div{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:6px;height:100%}
+.bars i{display:block;width:100%;border-radius:10px 10px 4px 4px;background:var(--brand-soft);transition:height .4s}
+.bars i.on{background:var(--brand)}
+.bars b{font-size:12.5px}
+.bars span{font-size:12px;color:var(--muted)}
+@media (max-width:900px){.calc{grid-template-columns:1fr}}
+
+/* tables/compare */
+table{width:100%;border-collapse:collapse;font-size:14.5px}
+th,td{padding:14px 16px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.tbox{overflow-x:auto;background:var(--surface);border-radius:20px;border:1px solid var(--line)}
+
+/* how it works */
+.hiw{display:grid;grid-template-columns:260px minmax(0,1fr);gap:40px;align-items:start}
+.toc{position:sticky;top:96px;display:flex;flex-direction:column;gap:4px}
+.toc button{text-align:left;border:0;background:none;padding:11px 14px;border-radius:12px;font-weight:600;color:var(--muted);min-height:44px}
+.toc button.on{background:var(--surface);color:var(--brand);box-shadow:var(--shadow)}
+.toc button span{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:99px;background:var(--alt);font-size:12px;margin-right:8px;font-weight:800}
+.toc button.on span{background:var(--brand);color:#fff}
+.panel2{background:var(--surface);border-radius:28px;padding:40px;box-shadow:var(--shadow)}
+.yy{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:22px 0}
+.yy div{border-radius:16px;padding:16px 18px;background:var(--bg)}
+.yy b{display:block;font-size:12px;letter-spacing:.08em;color:var(--brand);margin-bottom:4px}
+.pills{display:flex;flex-wrap:wrap;gap:8px}
+.pills span{background:var(--bg);border:1px solid var(--line);border-radius:99px;padding:7px 13px;font-size:13.5px;font-weight:600}
+@media (max-width:900px){.hiw{grid-template-columns:1fr}.toc{position:static;flex-direction:row;overflow-x:auto}.toc button{white-space:nowrap}.yy{grid-template-columns:1fr}.panel2{padding:24px}}
+
+/* industry page */
+.ihero{position:relative;color:#fff;min-height:440px;display:flex;align-items:flex-end}
+.ihero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.ihero:after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(16,12,10,.88),rgba(16,12,10,.25))}
+.ihero .wrap{position:relative;z-index:1;padding-bottom:56px;padding-top:100px;width:100%}
+.ihero h1{font-size:clamp(36px,5vw,60px);max-width:860px}
+.ihero .lead{color:#EAE2D8}
+.crumb{font-size:13px;color:#E2D9CE;margin-bottom:14px}
+.crumb a{color:#fff}
+.grid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:22px}
+.box h3{font-size:17px;margin:10px 0 6px}
+.box p{margin:0;color:var(--muted);font-size:14.5px}
+.num{width:38px;height:38px;border-radius:99px;display:grid;place-items:center;background:var(--brand);color:#fff;font:800 15px var(--h)}
+.pain{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:#FCE7E4;color:var(--brand)}
+.help{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:var(--sage-soft);color:var(--sage)}
+.steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;position:relative}
+.steps>div{padding:0 18px 0 0;position:relative}
+.steps>div:not(:last-child):after{content:"";position:absolute;top:19px;left:46px;right:8px;height:2px;background:var(--line2)}
+.fit{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.fit div{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px;font-weight:600;display:flex;gap:10px;align-items:center}
+.fit div:before{content:"✓";color:var(--sage);font-weight:900}
+@media (max-width:1000px){.grid4,.steps{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:24px}.fit{grid-template-columns:1fr 1fr}.steps>div:after{display:none}}
+@media (max-width:560px){.grid4,.steps,.fit{grid-template-columns:1fr}}
+
+/* suppliers (B2B) */
+.sgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:18px}
+.sup{background:var(--surface);border:1px solid var(--line);border-radius:22px;overflow:hidden;display:flex;flex-direction:column}
+.sup .ph{position:relative;height:180px}
+.sup .ph img{width:100%;height:100%;object-fit:cover}
+.sup .ph .v{position:absolute;left:14px;top:14px;background:var(--surface);color:var(--sage);font-weight:800;font-size:12px;border-radius:99px;padding:5px 10px}
+.sup .c{padding:20px;display:flex;flex-direction:column;gap:12px;flex:1}
+.facts{display:grid;grid-template-columns:1fr 1fr;gap:8px 14px;font-size:13px}
+.facts dt{color:var(--muted);font-weight:600}
+.facts dd{margin:0;font-weight:700}
+.filters{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:20px 0 26px}
+select,input[type=text],input[type=email],input[type=number],textarea{font:inherit;border:1px solid var(--line2);border-radius:12px;background:var(--surface);color:var(--ink);padding:0 14px;min-height:46px}
+textarea{padding:12px 14px;min-height:96px;width:100%}
+label.f{display:grid;gap:6px;font-weight:600;font-size:14px}
+.st{display:inline-block;border-radius:99px;padding:3px 10px;font-size:12px;font-weight:800}
+.st.ok{background:var(--sage-soft);color:#2D5039}
+.st.info{background:#E5EDF7;color:#1F4A80}
+.st.warn{background:#FFF0D6;color:#7A4A00}
+
+/* modal, toast */
+.scrim{position:fixed;inset:0;background:rgba(16,12,10,.5);z-index:60;display:none;align-items:center;justify-content:center;padding:20px}
+.scrim.open{display:flex}
+.modal{background:var(--surface);border-radius:24px;max-width:560px;width:100%;max-height:90vh;overflow:auto;padding:28px;box-shadow:0 30px 80px rgba(0,0,0,.25)}
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,140px);background:var(--ink);color:#fff;padding:13px 18px;border-radius:14px;font-weight:600;z-index:90;transition:transform .25s;max-width:92vw}
+.toast.show{transform:translate(-50%,0)}
+
+/* signup */
+.stepper{display:flex;gap:8px;margin-bottom:24px}
+.stepper i{flex:1;height:6px;border-radius:99px;background:var(--line)}
+.stepper i.on{background:var(--brand)}
+.choice{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.choice button{text-align:left;border:2px solid var(--line);background:var(--surface);border-radius:18px;padding:18px;min-height:120px}
+.choice button.on{border-color:var(--brand);background:var(--brand-soft)}
+.choice b{display:block;font-family:var(--h);font-size:17px;margin-bottom:4px}
+@media (max-width:700px){.choice{grid-template-columns:1fr}}
+
+/* footer */
+footer{background:var(--alt);color:var(--muted);border-top:1px solid var(--line);padding:64px 0 40px;font-size:14px}
+footer .cols{display:grid;grid-template-columns:1.4fr repeat(4,1fr);gap:28px}
+footer b{color:var(--ink);display:block;margin-bottom:10px}
+footer a{color:var(--muted);text-decoration:none;display:block;padding:4px 0}
+footer a:hover{color:var(--ink)}
+footer .logo{color:var(--ink)}
+@media (max-width:900px){footer .cols{grid-template-columns:1fr 1fr}}
+.cta{position:relative;border-radius:28px;overflow:hidden;color:#fff;padding:64px 48px}
+.cta img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.cta:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(130,24,27,.94),rgba(130,24,27,.6))}
+.cta>div{position:relative;z-index:1;max-width:640px}
+.cta h2{font-size:clamp(28px,3.6vw,44px)}
+
+/* ---- Sentinel-style overrides ---- */
+h1,h2,h3,h4{font-weight:500;letter-spacing:-.035em}
+h1 .dim,h2 .dim{color:#7F8893}
+.eyebrow{font-family:var(--mono);font-weight:500;letter-spacing:.06em;text-transform:none;color:var(--brand);font-size:13px}
+.btn{font-weight:600}
+.btn.primary{color:#06140F}.btn.primary:hover{background:var(--brand2)}
+.btn.ghost{color:var(--ink);border-color:var(--line2)}.btn.ghost:hover{border-color:var(--ink)}
+.btn.light{background:var(--brand);color:#06140F}
+.btn.outline-light{border-color:var(--line2)}
+.nav{background:rgba(11,14,18,.82);border-bottom:1px solid var(--line)}
+.menu>a,.menu>.dd>button{color:var(--ink)}
+.menu>a:hover,.menu>.dd>button:hover,.menu .on{background:#161C23}
+.dd .panel{background:var(--surface);border-color:var(--line)}
+.dd .panel a{color:var(--ink)}.dd .panel a:hover{background:#18202A}
+.login{color:var(--ink)}
+.burger{background:var(--surface);border-color:var(--line2);color:var(--ink)}
+.logo{color:var(--ink)}
+.logo .mk{background:linear-gradient(135deg,#4FD1A1,#2E9C77);color:#06140F}
+.demobar{background:#0F1318;color:#99A2AC;border-bottom:1px solid var(--line)}
+.demobar b{color:var(--brand)}
+.hero{background:radial-gradient(800px 420px at 85% 0%,rgba(79,209,161,.10),transparent 60%),var(--bg)}
+.hero h1{font-weight:500}
+.band.alt{background:var(--alt);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.chip{background:transparent;border-color:var(--line2);color:var(--ink)}
+.chip.on{background:var(--brand);border-color:var(--brand);color:#06140F}
+.box,.tier,.sup,.scard,.cyc,.node,.fit div,.tbox,.panel2,.modal,.calc,.feature,.stack,.bcol.before{background:var(--surface);border-color:var(--line);color:var(--ink)}
+.sitem{border-color:var(--line);border-left-color:var(--brand)}
+.sitem .ic,.pain{background:rgba(201,64,63,.14);color:#F08A88}
+.help{background:var(--sage-soft);color:var(--brand)}
+.num{background:var(--brand);color:#06140F}
+.st.ok{background:var(--sage-soft);color:var(--brand)}
+.before .bi{background:#0F1318}
+.bcol.after{background:linear-gradient(160deg,#15382C,#0F2620);border:1px solid #1F4D3C}
+.after .bi span{color:var(--brand)}
+.path .tag{background:var(--brand);color:#06140F}
+.path:after{background:linear-gradient(180deg,rgba(11,14,18,0) 25%,rgba(11,14,18,.92))}
+.feature .ph:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent 60%,var(--surface))}
+.scard img,.sup .ph img,.path img,.feature img,.mosaic img{filter:saturate(.9) brightness(.9)}
+.scard .role{color:var(--brand);font-family:var(--mono);font-weight:500;letter-spacing:0;text-transform:none}
+.scard .go{color:var(--brand)}
+.cta:after{background:linear-gradient(90deg,rgba(11,14,18,.95),rgba(11,14,18,.55))}
+.cta{border:1px solid var(--line)}
+.toc button.on{background:var(--surface);color:var(--brand)}
+.toc button span{background:#18202A}.toc button.on span{background:var(--brand);color:#06140F}
+.yy div{background:#0F1318}
+.yy b{color:var(--brand);font-family:var(--mono);font-weight:500}
+.pills span{background:#0F1318;border-color:var(--line)}
+th{color:var(--muted);font-family:var(--mono);font-weight:500;letter-spacing:0;text-transform:none}
+td,th{border-color:var(--line)}
+.tier .who{color:var(--brand);font-family:var(--mono);font-weight:500;letter-spacing:0;text-transform:none}
+.tier.hl{border-color:var(--brand)}
+.ribbon{background:var(--brand);color:#06140F}
+.tier .pr,.facts dd,.kpi b{font-family:var(--mono);font-weight:500;letter-spacing:-.02em}
+.bars i{background:#1E2A33}.bars i.on{background:var(--brand)}
+.mbar{display:none}
+select,input[type=text],input[type=email],input[type=number],textarea{background:#0F1318;border-color:var(--line2);color:var(--ink)}
+.toast{background:var(--brand);color:#06140F}
+footer{background:#080A0D;border-top:1px solid var(--line);color:var(--muted)}
+footer b{color:var(--ink)}footer a{color:var(--muted)}footer a:hover{color:var(--ink)}footer .logo{color:var(--ink)}
+.ihero:after{background:linear-gradient(0deg,rgba(11,14,18,.95),rgba(11,14,18,.35))}
+.ihero .eyebrow,.crumb a{color:var(--brand)}
+/* heat card */
+.heat{background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:24px;box-shadow:var(--shadow)}
+.heat .hd{display:flex;justify-content:space-between;gap:12px;align-items:baseline;flex-wrap:wrap;margin-bottom:6px}
+.heat .hd b{font-weight:600}
+.heat .hd span{color:var(--muted);font-size:13px}
+.heat .tg{display:inline-flex;background:#0F1318;border-radius:99px;padding:4px;margin:12px 0 16px}
+.heat .tg button{border:0;background:none;color:var(--muted);padding:6px 14px;border-radius:99px;font-weight:600;font-size:13px;min-height:34px}
+.heat .tg button.on{background:#222A33;color:var(--ink)}
+.hrow{display:grid;grid-template-columns:90px 1fr 76px;white-space:nowrap;gap:10px;align-items:center;font-family:var(--mono);font-size:12.5px;padding:5px 0}
+.hrow .lab{color:#C9CFD6}
+.hrow .cells{display:grid;grid-template-columns:repeat(26,1fr);gap:3px}
+.hrow .cells i{height:20px;border-radius:4px;display:block}
+.hrow .cells i.fc{outline:1px dashed rgba(79,209,161,.5);outline-offset:-1px}
+.hrow .v{text-align:right;color:var(--brand)}
+.heat .lg{display:flex;gap:8px;align-items:center;font-size:12px;color:var(--muted);margin-top:12px}
+.heat .lg i{width:80px;height:6px;border-radius:99px;background:linear-gradient(90deg,#1A2A2A,#4FD1A1,#E8C26A)}
+.heat .note{font-size:12px;color:#7F8893;margin-top:10px}
+</style>
+</head>
+<body>
+<div class="demobar"><b>Demo redesign · Sentinel style</b> · SupplyBistro · sample data in the supplier catalog · forms don't send anything</div>
+<header class="nav">
+  <div class="wrap bar">
+    <a class="logo" href="#home" aria-label="SupplyBistro home"><span class="mk">SB</span><span class="wd">SupplyBistro</span></a>
+    <nav class="menu" id="menu" aria-label="Main">
+      <div class="dd" data-dd>
+        <button aria-expanded="false" data-ddbtn>How it Works <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+        <div class="panel wide" id="ddhow"></div>
+      </div>
+      <div class="dd" data-dd>
+        <button aria-expanded="false" data-ddbtn>Marketplaces <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+        <div class="panel" id="ddmk"></div>
+      </div>
+      <a href="#suppliers" data-nav="suppliers">Find Suppliers</a>
+      <a href="#about" data-nav="about">About</a>
+    </nav>
+    <div class="navr">
+      <a class="login" href="#start" data-login>Log in</a>
+      <a class="btn primary sm" href="#start">Get started</a>
+      <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    </div>
+  </div>
+</header>
+<main id="app" tabindex="-1"></main>
+<footer>
+  <div class="wrap">
+    <div class="cols">
+      <div><a class="logo" href="#home"><span class="mk">SB</span><span class="wd">SupplyBistro</span></a><p style="margin:14px 0 0;max-width:300px">E-commerce and order management built for food businesses. Sell more, buy smarter, keep more of every order.</p></div>
+      <div><b>Platform</b><a href="#how">How it works</a><a href="#suppliers">Find suppliers</a><a href="#pricing">Pricing</a><a href="#start">Get started</a></div>
+      <div><b>Who we serve</b><a href="#industry-restaurants">Restaurants</a><a href="#industry-distributors">Distributors</a><a href="#industry-farms">Farms &amp; Producers</a><a href="#industry-chambers">Chambers &amp; EDGs</a></div>
+      <div><b>Marketplaces</b><a href="#cornell">Cornell Marketplace</a><a href="#marketplaces">All marketplaces</a><a href="#industry-chambers">Run your own</a></div>
+      <div><b>Company</b><a href="#about">About us</a><a href="#assess" data-assess>Book a free assessment</a></div>
+    </div>
+    <p style="margin:40px 0 0;font-size:12.5px">Demo redesign for review. Photos from Unsplash. Supplier catalog uses sample data.</p>
+  </div>
+</footer>
+<div class="scrim" id="scrim"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="mtitle" id="modal"></div></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+function img(id,w){return 'https://images.unsplash.com/photo-'+id+'?auto=format&fit=crop&w='+(w||1200)+'&q=72'}
+var IC={
+ doc:'<path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M10 13h6M10 17h6"/>',
+ chip:'<rect x="7" y="7" width="10" height="10" rx="1"/><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/>',
+ chart:'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+ trend:'<path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/>',
+ alert:'<path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/>',
+ check:'<path d="M5 12l4 4 10-10"/>',
+ arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>'
+};
+function ico(n,s){return '<svg width="'+(s||22)+'" height="'+(s||22)+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+IC[n]+'</svg>'}
+
+var IND={
+ restaurants:{name:'Restaurants & Food Operators',side:'Buy',img:'1517248135467-4c7edcad34c4',short:'Manage purchasing, inventory, vendors, and daily operations with less manual work and better visibility.',
+  lead:'SupplyBistro helps restaurants simplify daily ordering, track inventory more clearly, communicate with vendors faster, and reduce the manual work that slows down kitchen and operations teams.',
+  problem:'Restaurant teams are juggling too many platforms',
+  problemText:'Most restaurants rely on a mix of texts, notes, spreadsheets, supplier portals, and manual checks to manage food purchasing and inventory.',
+  pains:[['Inventory guesswork','Counts are hard to keep updated in real time, leading to gaps and last-minute surprises.'],['Manual stock checks','Staff spend too much time checking stock instead of focusing on food, guests, and service.'],['Over-ordering and waste','Without clear data, food waste and over-ordering become harder to control.'],['Limited cost visibility','Managers lack a clear view of purchasing trends and cost changes.']],
+  helps:[['Centralized ordering','Create and send orders in one place so every location stays aligned.'],['Inventory visibility','See what you have, what is running low, and what is on the way.'],['Vendor communication','Message vendors and keep every conversation in one timeline.'],['Cost and waste control','Track prices, spot trends, and reduce waste.']],
+  steps:[['Check inventory','Review stock levels and identify needs.'],['Place orders','Build orders and send them to the right vendors.'],['Track updates','Monitor confirmations, deliveries, and changes.'],['Review patterns','Analyze trends to improve planning and control costs.']],
+  fit:['Independent restaurants','Multi-location restaurant groups','Cafes and bakeries','Commercial kitchens','Quick-service and casual dining','Operators managing multiple vendors']},
+ distributors:{name:'Distributors, Wholesalers & Suppliers',side:'Sell',img:'1586528116311-ad8dd3c8310d',short:'Turn product catalogs into repeatable sales channels and track buyer interest more clearly.',
+  lead:'Publish one catalog to your own site, to community marketplaces and to the open market, with pricing set per channel and per customer.',
+  problem:'Your catalog lives in too many places',problemText:'PDF price lists, spreadsheets, phone orders and texts make it hard to see which accounts are growing and which are slipping.',
+  pains:[['Scattered price lists','Every customer gets a different PDF and nobody is sure which one is current.'],['Orders by text and call','Reorders arrive in five channels and are re-keyed by hand.'],['Silent churn','You find out a buyer slowed down weeks after it happened.'],['Re-listing for every channel','Each new channel means rebuilding your catalog.']],
+  helps:[['One catalog, every channel','List once and publish to your site, marketplaces and the open market.'],['Client-specific pricing','Private stores and price lists for key accounts.'],['Demand data by SKU','See what sells, and to whom.'],['Every payment type','Card, ACH, wire, COD and payment terms on Growth.']],
+  steps:[['Upload your catalog','Spreadsheet in, clean listings out.'],['Set channel pricing','Public, private or per customer.'],['Confirm orders','Every order and message in one place.'],['Grow accounts','See who reorders and who is slowing down.']],
+  fit:['Regional distributors','Specialty importers','Wholesale bakeries and roasters','Foodservice suppliers','Packaging and disposables suppliers','Multi-warehouse wholesalers']},
+ farms:{name:'Farms & Producers',side:'Sell',img:'1500937386664-56d1dfef3854',short:'Share seasonal availability, reach local buyers, and build more repeat wholesale relationships.',
+  lead:'Post what is ready this week, reach restaurants and grocers nearby, and turn seasonal sales into standing orders.',
+  problem:'Great product, unpredictable demand',problemText:'Availability changes weekly, but buyers find out by phone or at the market, and repeat orders depend on memory.',
+  pains:[['Availability changes weekly','Buyers do not know what is ready until you call them.'],['Few wholesale buyers','Selling beyond the market takes time you do not have.'],['Manual invoicing','Orders, invoices and payments live on paper.'],['No repeat rhythm','Good accounts drift without a standing order.']],
+  helps:[['Seasonal availability','Publish what is ready and let buyers order directly.'],['Local buyer reach','Show up in community marketplaces near you.'],['Standing orders','Turn regular buyers into scheduled orders.'],['Paid through Stripe','Payment goes straight to you.']],
+  steps:[['Post availability','Update what is ready this week.'],['Receive orders','Buyers order and pay online.'],['Deliver direct','You ship or deliver to the buyer.'],['Set standing orders','Lock in repeat volume.']],
+  fit:['Vegetable and fruit farms','Dairy and egg producers','Pasture-raised meat producers','Orchards and cideries','Grower cooperatives','Specialty and organic farms']},
+ founders:{name:'Food Founders, Startups & Market Sellers',side:'Sell',img:'1488459716781-31db52582fe9',short:'Organize product information, capture leads, and turn one-time traction into a cleaner buyer pipeline.',
+  lead:'Get your first wholesale buyers, real feedback and a professional storefront without building one yourself.',
+  problem:'Traction that does not turn into accounts',problemText:'Market days and launch buzz create interest, but leads sit in DMs and notebooks.',
+  pains:[['No wholesale storefront','Buyers ask for a line sheet you do not have.'],['Leads get lost','Interest from markets and DMs never becomes an order.'],['Retail margins','Retailers and marketing take 15–30% of each sale.'],['No feedback loop','You do not hear why buyers do not reorder.']],
+  helps:[['Professional storefront','Your catalog on your own branded site.'],['Lead capture','Every inquiry tracked to an order.'],['Keep more margin','A 2–5% platform fee instead of retail markups.'],['Mentorship and programs','Introductions, feedback and incubation.']],
+  steps:[['Create storefront','Upload products and photos.'],['Join a marketplace','List in community marketplaces.'],['Win first buyers','Real orders from real accounts.'],['Iterate','Use buyer data to improve.']],
+  fit:['Emerging CPG brands','Farmers market sellers','Student and alumni startups','Specialty bakers and makers','Beverage brands','Kitchen-incubator businesses']},
+ grocery:{name:'Grocery, Retail & CPG Buyers',side:'Buy',img:'1542838132-92c53300491e',short:'Discover emerging products, evaluate supplier readiness, and source with clearer market signals.',
+  lead:'Find vetted regional brands, compare supplier readiness, and order with standardized terms.',
+  problem:'Sourcing new brands is slow and risky',problemText:'Every new vendor means paperwork, unclear readiness, and inconsistent ordering.',
+  pains:[['Vendor onboarding','Each new brand means new paperwork.'],['Unclear readiness','Hard to tell if a brand can deliver at volume.'],['Inconsistent ordering','Every supplier orders differently.'],['Little market signal','No view of what is selling elsewhere.']],
+  helps:[['Curated discovery','Vetted regional brands in one place.'],['Supplier profiles','Capacity, certifications and terms up front.'],['Standardized ordering','One checkout across suppliers.'],['Market signals','See what is trending and reordered.']],
+  steps:[['Discover','Browse curated suppliers.'],['Request quotes','Send RFQs to several suppliers.'],['Order','One cart, many suppliers.'],['Reorder','Restock in one click.']],
+  fit:['Independent grocers','Co-ops','Specialty retailers','Taste NY and regional stores','Regional chains','CPG category buyers']},
+ services:{name:'Service Providers & Ecosystem Partners',side:'Sell',img:'1600880292203-757bb62b4baf',short:'Reach better-fit food businesses, build measurable programs, and support local ecosystem growth.',
+  lead:'Offer services to the food businesses on SupplyBistro and measure the programs you run with them.',
+  problem:'Hard to reach the right food businesses',problemText:'Food businesses are fragmented and hard to target, and program results are hard to measure.',
+  pains:[['Fragmented audience','Food businesses are hard to find and target.'],['Hard to measure impact','Programs end without clear outcomes.'],['One-off engagements','Clients come and go without a relationship.'],['No shared data','You cannot see how clients are performing.']],
+  helps:[['Targeted reach','List services where food businesses already buy.'],['Measurable programs','Track participant sales and growth.'],['Asks and Offers','Get matched to businesses that need you.'],['Sell services','Services sell alongside goods.']],
+  steps:[['List services','Create your service profile.'],['Get matched','Respond to Asks from businesses.'],['Deliver','Run your engagement.'],['Measure','Report outcomes.']],
+  fit:['Consultants and advisors','Co-packers','Logistics providers','Food safety and compliance','Accountants and lenders','Marketing agencies']},
+ chambers:{name:'Chambers of Commerce & Economic Development Groups',side:'Host',img:'1521791136064-7986c2920216',short:'Run a marketplace for your members, set your own revenue share, and show measurable local impact.',
+  lead:'Chambers, universities, associations and economic development groups can run their own marketplace on SupplyBistro and set their own revenue share.',
+  problem:'Member programs without measurable results',problemText:'Directories and events are hard to tie to member sales and local economic impact.',
+  pains:[['Static directories','Member listings do not create transactions.'],['Hard to show impact','Funders want numbers you cannot produce.'],['No revenue stream','Programs cost money without returning any.'],['Members on many tools','No shared infrastructure for members.']],
+  helps:[['Your own marketplace','Co-branded, governed by you.'],['Set the revenue share','Configure fees across your network.'],['Ecosystem analytics','Member sales and activity reports.'],['Member storefronts','Every member gets a storefront inside your marketplace.']],
+  steps:[['Launch','Brand and configure your marketplace.'],['Onboard members','Invite and approve sellers and buyers.'],['Grow trade','Members buy and sell with each other.'],['Report impact','Share results with your board and funders.']],
+  fit:['Chambers of commerce','Industry cooperatives','Universities and academic institutions','Trade organizations','Economic development groups','Family-business initiatives']}
+};
+var INDK=['restaurants','distributors','farms','founders','grocery','services','chambers'];
+
+var SUP=[
+ {id:'greenleaf',name:'Greenleaf Produce Co.',img:'1490818387583-1baba5e638af',cat:'Produce',region:'Upstate NY',moq:'$250',lead:'Next day',terms:'Net 15, ACH, card',days:'Mon–Sat',tags:['Seasonal','Local'],
+  lines:[['Romaine lettuce','24 ct case',38.5,34.9],['Spring mix','3 lb case',27.0,24.5],['Broccoli crowns','20 lb case',29.89,27.5],['Hass avocado','48 ct case',54.0,49.0],['Cherry tomatoes','12 pt flat',24.5,22.0]]},
+ {id:'harbor',name:'Harbor Fresh Seafood',img:'1519708227418-c8fd9a32b7a2',cat:'Seafood',region:'NYC metro',moq:'$400',lead:'48 hours',terms:'Net 7, card, COD',days:'Tue · Thu · Sat',tags:['Sushi grade','Catch weight'],
+  lines:[['Atlantic salmon side','per lb, ~10 lb case',11.4,10.2],['Yellowtail loin','per lb',13.2,12.1],['Ground tuna','per lb, 10 lb case',3.95,3.6],['Shrimp 16/20 P&D','per lb, 5 lb block',7.9,7.2]]},
+ {id:'sarker',name:'SarkerLimited',img:'1579584425555-c3ce17fd4351',cat:'Asian specialty',region:'NY · NJ',moq:'$300',lead:'Next day',terms:'Card, ACH',days:'Mon · Wed · Fri',tags:['Japanese','Dry goods'],
+  lines:[['Wasabi paste (S)','case',62.0,58.0],['Crab stick','case',38.0,35.0],['Udon, frozen','5×5 case',26.4,24.0],['Takoyaki sauce','6 × 1.1 lb',43.5,40.0]]},
+ {id:'roasters',name:'Finger Lakes Roasting',img:'1559056199-641a0ac8b55e',cat:'Beverages',region:'Statewide',moq:'$200',lead:'3–5 days',terms:'Net 30, ACH',days:'Weekly',tags:['Roaster','Private label'],
+  lines:[['House espresso','5 lb bag',62.0,56.0],['Cold brew blend','5 lb bag',58.0,52.0],['Decaf Colombia','5 lb bag',64.0,58.0]]},
+ {id:'bakehouse',name:'Hearth & Grain Bakehouse',img:'1509440159596-0249088772ff',cat:'Bakery',region:'Ithaca area',moq:'$150',lead:'Next morning',terms:'Net 15, card',days:'Daily',tags:['Wholesale bakery','Standing orders'],
+  lines:[['Sourdough boule','12 ct',42.0,38.0],['Brioche buns','48 ct',36.0,32.5],['Baguette','24 ct',30.0,27.0]]},
+ {id:'packright',name:'PackRight Supply',img:'1494412574643-ff11b0a5c1c3',cat:'Packaging',region:'Northeast',moq:'$500',lead:'2–4 days',terms:'Net 30, wire, ACH',days:'Mon–Fri',tags:['Pallet pricing','Compostable'],
+  lines:[['Take-out container GL805','150 ct case',48.0,43.0],['Clear lid TZ810','150 ct case',52.0,46.5],['Kraft bag #8','500 ct case',39.0,35.0]]}
+];
+var SUPI={};SUP.forEach(function(s){SUPI[s.id]=s});
+
+var S={hiw:0,cat:'All',q:'',plan:'sell',order:120,signStep:0,role:'',btype:'',rfq:null};
+function $(s){return document.querySelector(s)}
+function money(n){return '$'+n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',')}
+function toast(m){var t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(function(){t.classList.remove('show')},2800)}
+
+/* ---------- nav dropdowns ---------- */
+$('#ddhow').innerHTML='<a href="#how"><img src="'+img('1606787366850-de6330128bfc',120)+'" alt=""><div><b>How SupplyBistro works</b><span>Seven things worth knowing, in one place</span></div></a><div class="sep" style="grid-column:1/-1"></div>'+
+ INDK.map(function(k){var d=IND[k];return '<a href="#industry-'+k+'"><img src="'+img(d.img,120)+'" alt=""><div><b>'+d.name+'</b><span>'+d.short.split(',')[0]+'</span></div></a>'}).join('');
+$('#ddmk').innerHTML='<a href="#cornell"><img src="'+img('1541339907198-e08756dedf3f',120)+'" alt=""><div><b>Cornell Marketplace</b><span>Powered by SupplyBistro</span></div></a><a href="#marketplaces"><img src="'+img('1498837167922-ddd27525d352',120)+'" alt=""><div><b>All marketplaces &amp; partners</b><span>Fancy Food Marketplace, Smith Family Business Initiative</span></div></a><a href="#suppliers"><img src="'+img('1586528116311-ad8dd3c8310d',120)+'" alt=""><div><b>Find suppliers</b><span>Wholesale catalogs and quotes</span></div></a><div class="sep"></div><a href="#industry-chambers"><img src="'+img('1556761175-5973dc0f32e7',120)+'" alt=""><div><b>Run your own marketplace</b><span>For chambers, universities and associations</span></div></a>';
+function closeDD(){document.querySelectorAll('.dd').forEach(function(d){d.classList.remove('open');d.querySelector('button').setAttribute('aria-expanded','false')})}
+document.querySelectorAll('[data-ddbtn]').forEach(function(b){b.addEventListener('click',function(e){e.stopPropagation();var d=b.parentNode,o=!d.classList.contains('open');closeDD();if(o){d.classList.add('open');b.setAttribute('aria-expanded','true')}})});
+document.querySelectorAll('.dd').forEach(function(d){d.addEventListener('mouseenter',function(){if(innerWidth>1060){closeDD();d.classList.add('open')}});d.addEventListener('mouseleave',function(){if(innerWidth>1060)closeDD()})});
+document.addEventListener('click',function(e){if(!e.target.closest('.dd'))closeDD()});
+$('#burger').addEventListener('click',function(){var m=$('#menu');m.classList.toggle('mob');this.setAttribute('aria-expanded',m.classList.contains('mob'))});
+
+/* ---------- shared blocks ---------- */
+function serveGrid(){
+  return '<div class="serve">'+INDK.map(function(k,i){var d=IND[k];return '<a class="scard'+(i===0?' big':'')+'" href="#industry-'+k+'"><img loading="lazy" src="'+img(d.img,i===0?900:600)+'" alt="'+d.name+'"><div class="c"><span class="role">'+(d.side==='Buy'?'Buyers':d.side==='Sell'?'Sellers':'Marketplace hosts')+'</span><h3>'+d.name+'</h3><p>'+d.short+'</p><span class="go">View profile →</span></div></a>'}).join('')+'</div>';
+}
+function listOnce(){
+  return '<div class="flow"><div class="node core"><b style="font-size:22px">Your catalog</b><span>Set up once, priced by you</span></div>'+
+  '<div class="arrows" aria-hidden="true">'+ico('arrow',34)+ico('arrow',34)+ico('arrow',34)+'</div>'+
+  '<div class="outs"><div class="node"><b>Your own website</b><span>Your storefront, your domain, your customers</span></div><div class="node"><b>Community marketplaces</b><span>Chambers, universities, associations, EDGs</span></div><div class="node"><b>The open market</b><span>B2B buyers anywhere, via RFQ</span></div></div></div>';
+}
+function cta(t,s){return '<section class="band" style="padding-top:0"><div class="wrap"><div class="cta"><img loading="lazy" src="'+img('1414235077428-338989a2e8c0',1600)+'" alt=""><div><h2>'+(t||'See where your business can sell more and buy smarter.')+'</h2><p style="font-size:18px;color:#F6E2DF;margin:16px 0 26px">'+(s||'Book a free 30-minute assessment and see where your workflow is losing time, sales, margin or visibility.')+'</p><div class="row"><a class="btn light" href="#assess" data-assess>Book a free assessment</a><a class="btn outline-light" href="#start">Get started free</a></div></div></div></div></section>'}
+
+/* ---------- HOME ---------- */
+var HEATV='week';
+function heatCard(){
+  var rows=[['Produce',0.9,1],['Seafood',0.7,2],['Dry goods',0.45,3],['Beverages',0.55,4],['Packaging',0.35,5],['Bakery',0.6,6]];
+  var ramp=['#151C22','#17302A','#1C4636','#24614A','#2F8063','#4FD1A1','#A7D98A','#E8C26A'];
+  function val(r,c){var x=Math.sin(c*0.55+r*1.7)*0.5+0.5,y=Math.sin(c*0.21+r)*0.25;return Math.max(0,Math.min(1,(x*0.55+y+0.25)*rows[r][1]*1.25))}
+  var html='<div class="heat" aria-label="Sample account order activity heatmap"><div class="hd"><b>Your orders, week by week</b><span>Sample seller account · 6 months + next 2 weeks</span></div>'+
+  '<div class="tg" role="group" aria-label="Measure"><button class="'+(HEATV==='week'?'on':'')+'" data-heat="week">Cases ordered</button><button class="'+(HEATV==='buyers'?'on':'')+'" data-heat="buyers">Active buyers</button></div>';
+  rows.forEach(function(r,i){
+    var cells='',last=0;
+    for(var c=0;c<26;c++){var v=val(i,c+(HEATV==='buyers'?7:0));if(c>22)v=Math.min(1,v+0.15);last=v;cells+='<i class="'+(c>23?'fc':'')+'" style="background:'+ramp[Math.round(v*(ramp.length-1))]+'"></i>'}
+    html+='<div class="hrow"><span class="lab">'+r[0]+'</span><span class="cells">'+cells+'</span><span class="v">'+(last>0.66?'↑ rising':last>0.33?'→ steady':'↓ slower')+'</span></div>';
+  });
+  return html+'<div class="lg">Lower <i></i> Higher <span style="margin-left:auto">Dashed = forecast</span></div><p class="note">Illustration of the seller dashboard, not real data.</p></div>';
+}
+
+function home(){
+  return '<section class="hero"><div class="wrap"><div>'+
+  '<p class="eyebrow">● The B2B marketplace for food businesses</p><h1>Sell to more clients.<br><span class="dim">Sell more to the clients you have.</span></h1>'+
+  '<p class="lead">One place for farms, distributors, food brands and the restaurants and grocers who buy from them. List once, order in a few clicks, reorder in one.</p>'+
+  '<div class="row" style="margin-top:30px"><a class="btn primary" href="#start" data-role="sell">I want to sell</a><a class="btn ghost" href="#start" data-role="buy">I want to buy</a></div><p class="muted" style="margin:18px 0 0;font-size:14px">Not sure where to start? <a href="#assess" data-assess style="font-weight:700">Book a free 30-minute assessment</a></p></div>'+
+  heatCard()+
+  '</div></div></section>'+
+
+  '<section class="band" style="padding-top:40px"><div class="wrap"><div class="paths">'+
+  '<a class="path" href="#industry-distributors"><img loading="lazy" src="'+img('1586528116311-ad8dd3c8310d',900)+'" alt=""><div class="c"><span class="tag">Sell</span><h3>Reach more buyers</h3><p>List your catalog once. Sell on your site, in marketplaces and to new accounts.</p><span class="go">Start selling →</span></div></a>'+
+  '<a class="path" href="#industry-restaurants"><img loading="lazy" src="'+img('1555396273-367ea4eb4db5',900)+'" alt=""><div class="c"><span class="tag">Buy</span><h3>Order smarter</h3><p>All your suppliers, orders and reorders in one place. Always free for buyers.</p><span class="go">Start buying →</span></div></a>'+
+  '<a class="path" href="#industry-chambers"><img loading="lazy" src="'+img('1556761175-5973dc0f32e7',900)+'" alt=""><div class="c"><span class="tag">Host</span><h3>Run a marketplace</h3><p>For chambers, universities and associations that want to grow local trade.</p><span class="go">Learn more →</span></div></a>'+
+  '</div></div></section>'+
+
+  '<section class="band alt"><div class="wrap"><div class="sechead"><div><p class="eyebrow">The difference</p><h2>From scattered.<br><span class="dim">To connected.</span></h2></div><p class="muted" style="max-width:420px;margin:0">What a typical week of ordering looks like before and after SupplyBistro.</p></div>'+
+  '<div class="ba"><div class="bcol before"><h3>Before</h3>'+['Orders arrive by text, call and email','Price lists live in old PDFs','Stock checks done by hand','Reorders depend on someone remembering'].map(function(t){return '<div class="bi"><span>✕</span>'+t+'</div>'}).join('')+'</div>'+
+  '<div class="bcol after"><h3>With SupplyBistro</h3>'+['Every order in one inbox, confirmed in a click','One live catalog with your prices per customer','Low-stock alerts before you run out','Standing orders that repeat on their own'].map(function(t){return '<div class="bi"><span>✓</span>'+t+'</div>'}).join('')+'</div></div></div></section>'+
+
+  '<section class="band"><div class="wrap"><div class="feature"><div class="ph"><img loading="lazy" src="'+img('1541339907198-e08756dedf3f',1200)+'" alt="University campus building"></div><div class="tx"><p class="eyebrow">Featured marketplace</p><h2 class="h2">Cornell Marketplace</h2><p class="lead" style="font-size:17px">Real buyers for Cornell student and alumni food founders. Free to list, pay only when you sell.</p>'+
+  '<div class="row" style="margin-top:24px"><a class="btn primary" href="#cornell">Explore the marketplace</a><a class="btn ghost" href="#marketplaces">All marketplaces</a></div></div></div></div></section>'+
+
+  '<section class="band alt"><div class="wrap story"><div><p class="eyebrow">Our story</p><h2 class="h2">Connected food operations.</h2><p class="lead" style="font-size:17px">Food businesses still run on disconnected tools and delayed information. SupplyBistro puts every order, buyer, vendor and inventory signal in one picture.</p><a class="btn ghost" href="#about" style="margin-top:12px">Read our story</a></div>'+
+  '<div class="stack">'+[['doc','Connected platform','Orders, inventory, vendors and buyers in one place.'],['chip','Dual-sided transactions','Buyers and sellers on the same account.'],['chart','Better data','See what sells, to whom, and when to reorder.'],['trend','More value over time','Every order makes the next decision clearer.']].map(function(r){return '<div class="sitem"><span class="ic">'+ico(r[0])+'</span><div><h3>'+r[1]+'</h3><p>'+r[2]+'</p></div></div>'}).join('')+'</div></div></section>'+
+
+  '<section class="band"><div class="wrap"><div class="sechead"><div><p class="eyebrow">Who we serve</p><h2>Built for the whole food ecosystem</h2></div><a class="btn ghost" href="#how">How it works</a></div>'+serveGrid()+'</div></section>'+
+  cta();
+}
+
+/* ---------- HOW IT WORKS ---------- */
+var HIW=[
+ ['Sell more, buy smarter','More buyers, more channels and better data on what each one reorders. On the same account, purchasing gets the same treatment.','You grow the top line without growing headcount.','Less manual follow-up, and fewer things you find out about too late.',
+  function(){return '<div class="tbox"><table><thead><tr><th>Sellers get</th><th>What the platform does</th><th>Buyers get</th></tr></thead><tbody><tr><td>More buyers, more channels</td><td>List once, sell in several places</td><td>Automated repeat ordering</td></tr><tr><td>Demand data by SKU</td><td>See what sells, and to whom</td><td>Inventory and stockout alerts</td></tr><tr><td><b>You sell more</b>, without a sales team</td><td>Vendor management in one place</td><td><b>You buy smarter</b>, fewer stockouts and less waste</td></tr></tbody></table></div>'}],
+ ['Direct deals','The seller ships and delivers straight to the buyer. SupplyBistro never handles the goods and never holds the funds.','You keep the customer relationship.','You buy from a real company, with recourse against a real company.',
+  function(){return '<div class="flow" style="grid-template-columns:1fr auto 1fr"><div class="node core"><b>Sellers</b><span>ship and deliver</span></div><div class="arrows" aria-hidden="true" style="gap:16px">'+ico('arrow',30)+'<span style="font-size:12px;font-weight:700;color:var(--muted)">goods · services</span>'+'<span style="transform:scaleX(-1)">'+ico('arrow',30)+'</span><span style="font-size:12px;font-weight:700;color:var(--muted)">payment via Stripe</span></div><div class="node" style="text-align:center;padding:28px"><b>Buyers</b><span>receive directly</span></div></div><p class="muted" style="text-align:center;margin-top:18px">SupplyBistro and marketplace administrators sit outside the transaction, not a party to it.</p>'}],
+ ['Who is on the platform','Farms, distributors, food founders and service providers, selling to restaurants, grocery and retail buyers, and to each other.','Your buyer is somebody else\'s supplier. One account covers both.','You know exactly who you are buying from.',
+  function(){return '<div class="two" style="gap:20px"><div class="box"><b class="eyebrow" style="display:block">Sellers</b><div class="pills"><span>Farms &amp; Producers</span><span>Distributors &amp; Wholesalers</span><span>Food Founders &amp; Startups</span><span>Service Providers</span></div></div><div class="box"><b class="eyebrow" style="display:block">Buyers</b><div class="pills"><span>Restaurants &amp; Food Operators</span><span>Grocery, Retail &amp; CPG</span><span>Distributors &amp; Wholesalers</span><span>Consumers (B2C)</span></div></div></div>'}],
+ ['List once, sell everywhere','One catalog, one storefront. Publish it on your own website, into community marketplaces and to the open market.','One listing, as far as you want to take it.','The sellers you find early are the ones you will buy from at scale.',function(){return listOnce()}],
+ ['Tools, programs and introductions','Sellers get an operational platform, semi-automated procurement and the capacity to sell more. Buyers get curated supply, better prices and lasting connections.','Buy your own inputs here too, and the savings compound.','Someone here will introduce you to your next supplier.',
+  function(){return '<div class="two" style="gap:20px;align-items:start"><div class="box"><b class="eyebrow" style="display:block">For sellers</b><div class="pills"><span>Complete operational platform</span><span>Procurement</span><span>Sell on your own site</span><span>Sales and SKU data</span><span>Mentorship</span><span>Business incubation</span><span>Product-market fit</span></div></div><div class="box"><b class="eyebrow" style="display:block">For buyers</b><div class="pills"><span>Curated listings</span><span>Seasonal availability</span><span>Fewer stockouts</span><span>No retail markup</span><span>Introductions beyond the order</span><span>Back the producers you rely on</span></div></div></div>'}],
+ ['Asks and Offers','Not everything you need is for sale. Post what you are looking for and what you can give. The network does the matching.','The connection is worth as much as the margin.','The people you buy from can solve problems money can\'t.',
+  function(){return '<div class="two" style="gap:20px;align-items:start"><div class="box"><b class="eyebrow" style="display:block">Your asks</b><div class="pills"><span>An introduction</span><span>A supplier or co-packer</span><span>Advice on a hard call</span><span>A first customer</span></div></div><div class="box"><b class="eyebrow" style="display:block;color:var(--sage)">Your offers</b><div class="pills"><span>Mentorship</span><span>Spare capacity</span><span>A contact worth having</span><span>Experience you already paid for</span></div></div></div>'}]
+];
+function how(){
+  var h=HIW[S.hiw];
+  return '<section class="ihero" style="min-height:380px"><img src="'+img('1466637574441-749b8f19452f',1800)+'" alt="Cooking in a professional kitchen"><div class="wrap"><p class="eyebrow" style="color:#F3C77B">How it works</p><h1>Sell to more clients. Buy from people you can see. Keep more of every order.</h1><p class="lead">What changes for you as a seller, and as a buyer.</p></div></section>'+
+  '<section class="band"><div class="wrap hiw"><nav class="toc" aria-label="How it works sections">'+HIW.map(function(x,i){return '<button class="'+(i===S.hiw?'on':'')+'" data-hiw="'+i+'"><span>'+(i+1)+'</span>'+x[0]+'</button>'}).join('')+'</nav>'+
+  '<div class="panel2"><p class="eyebrow">'+(S.hiw+1)+' of 7</p><h2 class="h2">'+h[0]+'</h2><p class="lead">'+h[1]+'</p><div class="yy"><div><b>YOU SELL</b>'+h[2]+'</div><div><b>YOU BUY</b>'+h[3]+'</div></div>'+h[4]()+
+  '<div class="row" style="justify-content:space-between;margin-top:30px">'+(S.hiw>0?'<button class="btn ghost sm" data-hiw="'+(S.hiw-1)+'">← '+HIW[S.hiw-1][0]+'</button>':'<span></span>')+(S.hiw<HIW.length-1?'<button class="btn primary sm" data-hiw="'+(S.hiw+1)+'">'+HIW[S.hiw+1][0]+' →</button>':'<a class="btn primary sm" href="#start">Get started</a>')+'</div></div></div></section>'+
+  cta();
+}
+
+/* ---------- INDUSTRY ---------- */
+function industry(k){
+  var d=IND[k]||IND.restaurants;
+  return '<section class="ihero"><img src="'+img(d.img,1800)+'" alt="'+d.name+'"><div class="wrap"><div class="crumb"><a href="#how">How it works</a> / Who we serve</div><h1>'+d.name+'</h1><p class="lead">'+d.lead+'</p><div class="row" style="margin-top:26px"><a class="btn primary" href="#start" data-role="'+d.side.toLowerCase()+'">'+(d.side==='Buy'?'Start buying free':d.side==='Sell'?'Start selling':'Launch a marketplace')+'</a><a class="btn outline-light" href="#assess" data-assess>Book an assessment</a></div></div></section>'+
+  '<section class="band"><div class="wrap"><div class="sechead"><div><p class="eyebrow">The problem</p><h2>'+d.problem+'</h2></div><p class="muted" style="max-width:460px;margin:0">'+d.problemText+'</p></div><div class="grid4">'+d.pains.map(function(p){return '<div class="box"><span class="pain">'+ico('alert',20)+'</span><h3>'+p[0]+'</h3><p>'+p[1]+'</p></div>'}).join('')+'</div></div></section>'+
+  '<section class="band alt"><div class="wrap"><div class="sechead"><div><p class="eyebrow">How SupplyBistro helps</p><h2>Operate with more control</h2></div></div><div class="grid4">'+d.helps.map(function(p){return '<div class="box"><span class="help">'+ico('check',20)+'</span><h3>'+p[0]+'</h3><p>'+p[1]+'</p></div>'}).join('')+'</div></div></section>'+
+  '<section class="band"><div class="wrap"><p class="eyebrow">A clearer workflow</p><h2 class="h2" style="margin-bottom:36px">From first step to repeat business</h2><div class="steps">'+d.steps.map(function(s,i){return '<div><span class="num">'+(i+1)+'</span><h3 style="font-size:18px;margin:14px 0 6px">'+s[0]+'</h3><p class="muted" style="margin:0">'+s[1]+'</p></div>'}).join('')+'</div></div></section>'+
+  '<section class="band alt"><div class="wrap"><p class="eyebrow">Best fit for</p><h2 class="h2" style="margin-bottom:26px">Built for teams like yours</h2><div class="fit">'+d.fit.map(function(f){return '<div>'+f+'</div>'}).join('')+'</div></div></section>'+
+  cta();
+}
+
+/* ---------- PRICING ---------- */
+var TIERS=[
+ {key:'buyer',who:'Buyers',name:'Buyer',price:'$0',unit:'Always free, no subscription',cta:'Start buying',feat:['Inventory management','Supplier CRM','Order history and one-click reordering','Order management and tracking','Standard reports and analytics','Bilateral inventory sync on orders']},
+ {key:'starter',who:'New sellers',name:'Starter',price:'5% + $5',unit:'per completed order · no monthly fee',cta:'Start for free',feat:['Storefront with your full catalog (RFQ-approved buyers)','All seller tools: inventory, CRM, catalog, orders','Branded site (supplybistro.com/yourbrand)','Card and ACH payments']},
+ {key:'growth',who:'Growing sellers',name:'Growth',price:'$299',unit:'per month · yearly contract',cta:'Choose Growth',hl:true,feat:['Everything in Starter','Specialty storefronts and private stores for key accounts','Open Market access: new buyers via RFQ','All payment types: card, wire, cash, COD, terms','Your own site (shop.yourbrand.com)','Choose who pays fees, per channel','Up to 10 users, unlimited locations']},
+ {key:'scale',who:'High-volume sellers',name:'Scale',price:'$599',unit:'per month · details to confirm',cta:'Talk to sales',feat:['Everything in Growth','[More users and locations — to confirm]','[Priority onboarding — to confirm]','[Advanced reporting — to confirm]']},
+ {key:'community',who:'Marketplace hosts',name:'Community',price:'$399',unit:'per month · annual contract',cta:'Launch a marketplace',feat:['Member management and onboarding','Fee configuration and governance','Co-branding and network customization','Ecosystem analytics and reporting','Member storefronts inside your marketplace']}
+];
+var SIZES=[30,60,120,250,500,1000];
+function fpct(v){return (v*0.05+5)/v*100}
+function calcOut(){var fee=S.order*0.05+5;return '<div style="font:800 28px var(--h);margin-top:6px">'+money(S.order)+'</div><div class="row" style="margin-top:14px"><div class="box" style="flex:1;padding:16px"><span class="muted" style="font-size:13px">Starter fee</span><div style="font:800 24px var(--h)">'+money(fee)+'</div><span class="muted" style="font-size:13px">'+fpct(S.order).toFixed(1)+'% of the order</span></div><div class="box" style="flex:1;padding:16px"><span class="muted" style="font-size:13px">Growth pays off after</span><div style="font:800 24px var(--h)">'+Math.ceil(299/fee)+' orders</div><span class="muted" style="font-size:13px">per month at this size</span></div></div>'}
+function calcBars(){var near=SIZES.reduce(function(a,b){return Math.abs(b-S.order)<Math.abs(a-S.order)?b:a});return '<div class="bars">'+SIZES.map(function(v){var p=fpct(v);return '<div><b>'+p.toFixed(1)+'%</b><i class="'+(v===near?'on':'')+'" style="height:'+Math.min(100,p*4)+'%"></i><span>$'+v+'</span></div>'}).join('')+'</div><p class="muted" style="font-size:13px;margin:10px 0 0">Starter fee as a share of order size. On Growth, sellers set fees per channel and can pass them to the buyer.</p>'}
+function pricing(){
+  return '<section class="band" style="padding-bottom:40px"><div class="wrap" style="text-align:center"><p class="eyebrow">Pricing</p><h1 style="font-size:clamp(36px,5vw,58px)">One platform. A plan for every side of the market.</h1><p class="lead" style="margin:16px auto 0">Buying is always free. Sellers start with no monthly fee and upgrade when volume grows. Communities run their own marketplace.</p></div></section>'+
+  '<section style="padding-bottom:56px"><div class="wrap"><div class="tiers">'+TIERS.map(function(t){return '<div class="tier'+(t.hl?' hl':'')+'">'+(t.hl?'<span class="ribbon">Best for growing sellers</span>':'')+'<span class="who">'+t.who+'</span><h3>'+t.name+'</h3><div class="pr">'+t.price+'<small>'+t.unit+'</small></div><ul>'+t.feat.map(function(f){return '<li>'+f+'</li>'}).join('')+'</ul><a class="btn '+(t.hl?'primary':'ghost')+' sm block" href="#start" data-role="'+(t.key==='buyer'?'buy':t.key==='community'?'host':'sell')+'">'+t.cta+'</a></div>'}).join('')+'</div>'+
+  '<p class="muted" style="text-align:center;font-size:13px;margin-top:14px">Payments run through Stripe; standard processing fees apply. On marketplaces run by an administrator, the administrator\'s share is added on top.</p></div></section>'+
+  '<section class="band alt"><div class="wrap"><div class="calc"><div><p class="eyebrow">Fee calculator</p><h2 class="h2" style="font-size:32px">What does Starter cost on your orders?</h2><p class="muted">The flat $5 matters most on small orders. Drag to your typical order size.</p>'+
+  '<label class="f" for="ord" style="margin-top:20px">Typical order size</label><input id="ord" type="range" min="20" max="1500" step="10" value="'+S.order+'"><div id="calcout">'+calcOut()+'</div></div>'+
+  '<div id="calcbars">'+calcBars()+'</div></div></div></section>'+
+  '<section class="band"><div class="wrap"><p class="eyebrow">Compare</p><h2 class="h2" style="margin-bottom:24px">What each plan includes</h2><div class="tbox"><table><thead><tr><th>Feature</th><th>Buyer</th><th>Starter</th><th>Growth</th><th>Scale</th><th>Community</th></tr></thead><tbody>'+
+  [['Buy from any supplier','✓','✓','✓','✓','✓'],['Storefront and seller tools','—','✓','✓','✓','Members'],['Branded site','—','supplybistro.com/you','Own domain','Own domain','Co-branded'],['Open Market (RFQ)','—','—','✓','✓','—'],['Payment terms, COD, cash','—','—','✓','✓','—'],['Private stores for key accounts','—','—','✓','✓','—'],['Run your own marketplace','—','—','—','—','✓'],['Users','1','1','Up to 10','[To confirm]','Admins + members']].map(function(r){return '<tr>'+r.map(function(c,i){return i?'<td>'+c+'</td>':'<td><b>'+c+'</b></td>'}).join('')+'</tr>'}).join('')+'</tbody></table></div></div></section>'+cta('Not sure which plan fits?','Book a free assessment and we\'ll recommend a plan based on your order volume and channels.');
+}
+
+/* ---------- MARKETPLACES ---------- */
+function marketplaces(){
+  return '<section class="band" style="padding-bottom:40px"><div class="wrap"><p class="eyebrow">Clients, projects and marketplaces</p><h1 style="font-size:clamp(36px,5vw,58px);max-width:900px">Marketplaces powered by SupplyBistro</h1><p class="lead">Communities run their own marketplaces on SupplyBistro. Members list once and sell inside each marketplace, on their own site, or both.</p></div></section>'+
+  '<section style="padding-bottom:80px"><div class="wrap" style="display:grid;gap:22px">'+
+  mkCard('1541339907198-e08756dedf3f','Cornell Marketplace','Built by three Cornell alumni to incubate alumni and student companies with real buyers from the Cornell network and the open market.',['University','Student and alumni founders','Free to list'],'#cornell')+
+  mkCard('1498837167922-ddd27525d352','Fancy Food Marketplace','A curated marketplace for specialty food makers and the buyers looking for them. Limited-time founding offer.',['Specialty food','Curated'],'#start')+
+  mkCard('1556761175-5973dc0f32e7','Smith Family Business Initiative','A program connecting alumni and students from family businesses. Members trade, mentor and make introductions.',['Program partner','Family businesses'],'#start')+
+  '<div class="feature" style="background:var(--brand);color:#fff"><div class="tx"><p class="eyebrow" style="color:#F3C77B">Run your own</p><h2 class="h2">Launch a marketplace for your members</h2><p style="font-size:17px;color:#F6E2DF">For chambers of commerce, universities, cooperatives and trade associations. You set the terms and the revenue share; SupplyBistro provides the platform.</p><div class="row" style="margin-top:20px"><a class="btn light" href="#industry-chambers">See how it works</a><a class="btn outline-light" href="#pricing">Community plan · $399/mo</a></div></div><div class="ph"><img loading="lazy" src="'+img('1521791136064-7986c2920216',1000)+'" alt=""></div></div>'+
+  '</div></section>';
+}
+function mkCard(im,t,d,tags,href){return '<div class="feature"><div class="ph" style="min-height:300px"><img loading="lazy" src="'+img(im,1000)+'" alt=""></div><div class="tx"><h2 style="font-size:30px">'+t+'</h2><p class="muted" style="font-size:16px">'+d+'</p><div class="chips" style="margin:16px 0 22px">'+tags.map(function(x){return '<span class="chip">'+x+'</span>'}).join('')+'</div><div class="row"><a class="btn primary sm" href="'+href+'">Visit</a><a class="btn ghost sm" href="#start" data-role="buy">I want to buy</a><a class="btn ghost sm" href="#start" data-role="sell">I want to sell</a></div></div></div>'}
+function cornell(){
+  return '<section class="ihero"><img src="'+img('1562774053-701939374585',1800)+'" alt="University campus"><div class="wrap"><div class="crumb"><a href="#marketplaces">Marketplaces</a> / Cornell Marketplace</div><p class="eyebrow" style="color:#F3C77B">Powered by SupplyBistro</p><h1>Cornell Marketplace</h1><p class="lead">Real customers, real sales and real feedback for Cornell student and alumni founders, with buyers from the Cornell network and beyond.</p><div class="row" style="margin-top:26px"><a class="btn primary" href="#start" data-role="sell">Sell on Cornell Marketplace</a><a class="btn light" href="#start" data-role="buy">Shop Cornell-made</a></div></div></section>'+
+  '<section class="band"><div class="wrap"><div class="sechead"><div><p class="eyebrow">Which one are you?</p><h2>Find your place in the marketplace</h2></div></div><div class="paths">'+
+  [['1522071820081-009f0129c71c','Student founders','Turn your ideas into real sales and discover other student-built startups.','Start selling'],['1556740758-90de374c12ad','Cornell buyers','Discover and support Cornell-made products, from snacks to holiday gifts.','Start shopping'],['1600880292203-757bb62b4baf','Alumni','Support the next generation of Cornell founders as a buyer, mentor or seller.','Get involved']].map(function(p){return '<a class="path" href="#start"><img loading="lazy" src="'+img(p[0],800)+'" alt=""><div class="c"><h3>'+p[1]+'</h3><p>'+p[2]+'</p><span class="go">'+p[3]+' →</span></div></a>'}).join('')+'</div></div></section>'+
+  '<section class="band alt"><div class="wrap two" style="align-items:start"><div class="box" style="padding:30px"><p class="eyebrow">Why sellers join</p><ul style="margin:0;padding-left:18px;display:grid;gap:10px;font-size:16px"><li><b>No upfront risk.</b> Free to list; pay a small fee only when you sell.</li><li><b>One simple dashboard.</b> Orders, shipping notes and buyer info in one place.</li><li><b>Cornell credibility.</b> A trusted audience from day one.</li></ul></div><div class="box" style="padding:30px"><p class="eyebrow" style="color:var(--sage)">Why buyers return</p><ul style="margin:0;padding-left:18px;display:grid;gap:10px;font-size:16px"><li><b>Fast checkout.</b> No vendor paperwork every time.</li><li><b>One-click reordering.</b> Restock regular orders in seconds.</li><li><b>Network pricing.</b> Special rates for the Cornell community.</li></ul></div></div></section>'+cta('Launching your Cornell food business?','List for free and reach Cornell buyers and the open market.');
+}
+
+/* ---------- SUPPLIERS (B2B) ---------- */
+function suppliers(){
+  var cats=['All','Produce','Seafood','Asian specialty','Beverages','Bakery','Packaging'];
+  return '<section class="band" style="padding-bottom:20px"><div class="wrap"><p class="eyebrow">Find suppliers</p><h1 style="font-size:clamp(34px,4.6vw,54px)">Wholesale supply, by the case and the pallet</h1><p class="lead">Compare suppliers by delivery area, minimums and payment terms. Request a quote, set up a standing order, or buy from your negotiated price list.</p>'+
+  '<div class="filters"><label class="sr" for="sq">Search suppliers</label><input id="sq" type="text" placeholder="Search suppliers or products" value="'+S.q+'" style="flex:1 1 280px;max-width:420px"><div class="chips">'+cats.map(function(c){return '<button class="chip'+(S.cat===c?' on':'')+'" data-cat="'+c+'">'+c+'</button>'}).join('')+'</div></div></div></section>'+
+  '<section style="padding-bottom:80px"><div class="wrap"><div class="sgrid" id="sgrid"></div><p class="muted" style="font-size:13px;margin-top:20px">Demo catalog: supplier names, minimums and prices are sample data (SarkerLimited lines use QA prices where available).</p></div></section>';
+}
+function drawSup(){
+  var g=$('#sgrid');if(!g)return;var q=S.q.toLowerCase();
+  var list=SUP.filter(function(s){return (S.cat==='All'||s.cat===S.cat)&&(!q||(s.name+' '+s.lines.map(function(l){return l[0]}).join(' ')).toLowerCase().indexOf(q)>-1)});
+  g.innerHTML=list.length?list.map(function(s){return '<article class="sup"><div class="ph"><img loading="lazy" src="'+img(s.img,700)+'" alt=""><span class="v">✓ Verified</span></div><div class="c"><div><h3 style="font-size:20px"><a href="#supplier-'+s.id+'" style="color:var(--ink);text-decoration:none">'+s.name+'</a></h3><div class="muted" style="font-size:14px">'+s.cat+' · '+s.region+'</div></div><dl class="facts"><div><dt>Min. order</dt><dd>'+s.moq+'</dd></div><div><dt>Lead time</dt><dd>'+s.lead+'</dd></div><div><dt>Delivery</dt><dd>'+s.days+'</dd></div><div><dt>Terms</dt><dd>'+s.terms+'</dd></div></dl><div class="chips">'+s.tags.map(function(t){return '<span class="chip" style="font-size:12px;padding:4px 10px">'+t+'</span>'}).join('')+'</div><div class="row" style="margin-top:auto"><a class="btn primary sm" href="#supplier-'+s.id+'">View price list</a><button class="btn ghost sm" data-rfq="'+s.id+'">Request a quote</button></div></div></article>'}).join(''):'<div class="box">No suppliers match.</div>';
+}
+function supplier(id){
+  var s=SUPI[id]||SUP[0];
+  return '<section class="ihero" style="min-height:380px"><img src="'+img(s.img,1800)+'" alt=""><div class="wrap"><div class="crumb"><a href="#suppliers">Find suppliers</a> / '+s.name+'</div><h1>'+s.name+'</h1><p class="lead">'+s.cat+' · '+s.region+' · Delivers '+s.days+'</p><div class="row" style="margin-top:22px"><button class="btn primary" data-rfq="'+s.id+'">Request a quote</button><button class="btn outline-light" data-toast="Demo: a message thread with '+s.name+' would open here.">Message supplier</button></div></div></section>'+
+  '<section class="band"><div class="wrap two" style="align-items:start;grid-template-columns:1.6fr 1fr"><div><p class="eyebrow">Wholesale price list</p><h2 class="h2" style="font-size:32px;margin-bottom:18px">Case pricing with volume breaks</h2><div class="tbox"><table><thead><tr><th>Product</th><th>Pack</th><th>1–9 cases</th><th>10+ cases</th><th>Qty</th></tr></thead><tbody>'+
+  s.lines.map(function(l,i){return '<tr><td><b>'+l[0]+'</b></td><td>'+l[1]+'</td><td>'+money(l[2])+'</td><td style="color:var(--sage);font-weight:700">'+money(l[3])+'</td><td><label class="sr" for="q'+i+'">Quantity for '+l[0]+'</label><input id="q'+i+'" type="number" min="0" value="0" data-line="'+i+'" style="width:84px;min-height:40px"></td></tr>'}).join('')+
+  '</tbody></table></div><div class="row" style="justify-content:space-between;margin-top:16px"><div style="font-weight:700">Order total: <span id="ototal" style="font:800 22px var(--h)">$0.00</span> <span class="muted" style="font-weight:500;font-size:13px">min. '+s.moq+'</span></div><div class="row"><button class="btn ghost sm" data-standing="'+s.id+'">Make it a standing order</button><button class="btn primary sm" data-place="'+s.id+'">Place order</button></div></div></div>'+
+  '<div class="box" style="padding:26px"><h3 style="font-size:18px;margin-bottom:14px">Supplier details</h3><dl class="facts" style="grid-template-columns:1fr;gap:12px;font-size:14px"><div><dt>Minimum order</dt><dd>'+s.moq+'</dd></div><div><dt>Lead time</dt><dd>'+s.lead+'</dd></div><div><dt>Delivery days</dt><dd>'+s.days+'</dd></div><div><dt>Payment terms</dt><dd>'+s.terms+'</dd></div><div><dt>Certifications</dt><dd>[Food safety certifications]</dd></div></dl><p class="muted" style="font-size:13px;margin:16px 0 0">Prices shown are this supplier\'s public list. Approved accounts may see private pricing.</p></div></div></section>';
+}
+function rfqModal(id){
+  var s=SUPI[id];
+  $('#modal').innerHTML='<h2 id="mtitle" style="font-size:24px">Request a quote</h2><p class="muted">'+s.name+' usually replies within a business day.</p><form id="rfqform" style="display:grid;gap:14px;margin-top:16px"><label class="f">Products and volumes<textarea required placeholder="e.g. 20 cases romaine weekly, 10 cases spring mix"></textarea></label><div class="two" style="gap:12px"><label class="f">Delivery start<input type="text" placeholder="e.g. Next Monday"></label><label class="f">Frequency<select><option>One-time</option><option>Weekly</option><option>Twice weekly</option><option>Monthly</option></select></label></div><label class="f">Work email<input type="email" required placeholder="you@restaurant.com"></label><div class="row" style="justify-content:flex-end"><button type="button" class="btn ghost sm" data-close>Cancel</button><button class="btn primary sm" type="submit">Send request</button></div></form>';
+  $('#scrim').classList.add('open');$('#modal textarea').focus();
+}
+function assessModal(){
+  $('#modal').innerHTML='<h2 id="mtitle" style="font-size:24px">Book a free 30-minute assessment</h2><p class="muted">Pick a time with our founder. We\'ll look at where your workflow loses time, sales or margin.</p><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:18px 0">'+['Mon 10:00','Mon 2:30','Tue 9:30','Tue 1:00','Wed 11:00','Thu 3:00'].map(function(t){return '<button class="chip" data-slot style="min-height:44px">'+t+'</button>'}).join('')+'</div><label class="f">Work email<input type="email" id="aemail" placeholder="you@business.com"></label><div class="row" style="justify-content:flex-end;margin-top:16px"><button class="btn ghost sm" data-close>Cancel</button><button class="btn primary sm" data-book>Confirm</button></div><p class="muted" style="font-size:12.5px;margin-top:12px">Loads instantly here — the audit found the current booking page slow.</p>';
+  $('#scrim').classList.add('open');
+}
+function closeModal(){$('#scrim').classList.remove('open')}
+
+/* ---------- ABOUT ---------- */
+function about(){
+  return '<section class="ihero"><img src="'+img('1559339352-11d035aa65de',1800)+'" alt="Restaurant team at work"><div class="wrap"><p class="eyebrow" style="color:#F3C77B">About SupplyBistro</p><h1>Built by operators and food-industry leaders.</h1><p class="lead">Created after seeing small food businesses lose an estimated $10,000–$50,000 every month to stockouts, over-ordering, waste and decisions made without current data.</p></div></section>'+
+  '<section class="band"><div class="wrap"><p class="eyebrow">Meet the founders</p><h2 class="h2" style="margin-bottom:28px">Food, retail, technology and community</h2><div class="paths" style="gap:16px">'+
+  [['FM','Franco Mora','Co-Founder / CEO','Leads vision, partnerships and commercial strategy. Opened 1,500 convenience stores at above-industry margins.'],['AD','Adon Davis','Co-Founder / CTO','Leads technology and implementation. Built mission-critical data platforms in regulated environments.'],['JC','Jack Chen','Co-Founder','Brings the operator\'s view. Owner of a growing restaurant chain and board member of two chambers of commerce.']].map(function(f){return '<div class="box" style="padding:26px"><div style="width:64px;height:64px;border-radius:18px;background:var(--brand);color:#fff;display:grid;place-items:center;font:800 22px var(--h)">'+f[0]+'</div><h3 style="font-size:20px;margin:16px 0 2px">'+f[1]+'</h3><div style="color:var(--brand);font-weight:700;font-size:14px;margin-bottom:10px">'+f[2]+'</div><p class="muted" style="margin:0">'+f[3]+'</p></div>'}).join('')+'</div></div></section>'+
+  '<section class="band alt"><div class="wrap"><p class="eyebrow">Our story</p><h2 class="h2" style="margin-bottom:32px">We wanted to help small businesses</h2><div class="steps">'+[['We saw the problem firsthand','Disconnected systems created stockouts, waste, missed sales and slow decisions.'],['We connected the workflow','Ordering, inventory, vendors, customers and data belong in one place.'],['We focused on smaller businesses','Powerful technology should be practical and accessible.'],['We built for measurable outcomes','More sales, smarter purchasing, lower waste, clearer decisions.']].map(function(s,i){return '<div><span class="num">'+(i+1)+'</span><h3 style="font-size:18px;margin:14px 0 6px">'+s[0]+'</h3><p class="muted" style="margin:0">'+s[1]+'</p></div>'}).join('')+'</div></div></section>'+
+  '<section class="band"><div class="wrap"><p class="eyebrow">What guides us</p><div class="paths" style="gap:16px">'+[['Clarity over complexity','Technology should make the next decision easier, not add another system.'],['Growth with control','Sales matter, and so do margins, inventory and service levels.'],['Built around people','We design for owners, managers, buyers and sellers doing the work.']].map(function(v){return '<div class="box" style="padding:26px"><h3 style="font-size:20px;margin-bottom:8px">'+v[0]+'</h3><p class="muted" style="margin:0">'+v[1]+'</p></div>'}).join('')+'</div></div></section>'+cta();
+}
+
+/* ---------- GET STARTED ---------- */
+var BTYPES={sell:['Farm or producer','Distributor or wholesaler','Food founder or startup','Service provider','Restaurant that also sells'],buy:['Restaurant or food operator','Grocery, retail or CPG buyer','Cafeteria or commissary','Distributor buying inputs','Individual buyer'],host:['Chamber of commerce','University or academic institution','Industry cooperative','Trade organization','Economic development group']};
+function start(){
+  var st=S.signStep;
+  var body='';
+  if(st===0) body='<h2 class="h2" style="font-size:32px">What do you want to do first?</h2><p class="muted">You can always do the others later with the same account.</p><div class="choice" style="margin:22px 0">'+[['sell','Sell','List products and reach new buyers.'],['buy','Buy','Order from suppliers. Always free.'],['host','Run a marketplace','For chambers, universities and associations.']].map(function(c){return '<button class="'+(S.role===c[0]?'on':'')+'" data-pickrole="'+c[0]+'"><b>'+c[1]+'</b><span class="muted" style="font-size:14px">'+c[2]+'</span></button>'}).join('')+'</div>';
+  if(st===1) body='<h2 class="h2" style="font-size:32px">Which best describes you?</h2><p class="muted">This tailors your dashboard. We won\'t ask again.</p><div class="chips" style="margin:22px 0">'+BTYPES[S.role].map(function(b){return '<button class="chip'+(S.btype===b?' on':'')+'" data-btype="'+b+'">'+b+'</button>'}).join('')+'</div>';
+  if(st===2) body='<h2 class="h2" style="font-size:32px">Create your account</h2><p class="muted">'+(S.btype==='Individual buyer'?'No business details needed for individual buyers.':'Just the basics. Finish your profile later.')+'</p><form id="signform" style="display:grid;gap:14px;margin:20px 0;max-width:520px"><label class="f">Email<input type="email" required placeholder="you@business.com"></label>'+(S.btype==='Individual buyer'?'':'<label class="f">Business name<input type="text" required placeholder="Your business"></label>')+'<button class="btn primary" type="submit">Send my one-time code</button></form>';
+  if(st===3) body='<h2 class="h2" style="font-size:32px">You\'re in. Here\'s your first week.</h2><p class="muted">Demo only: no account was created.</p><div style="display:grid;gap:10px;margin:22px 0">'+(S.role==='sell'?['Upload your catalog from a spreadsheet','Add photos to your top 10 products','Choose your channels and pricing','Invite three buyers you already sell to']:S.role==='buy'?['Find your current suppliers','Save your usual order as a template','Request quotes from two new suppliers','Turn on low-stock reminders']:['Brand your marketplace','Set your fee and revenue share','Invite your first 15 sellers','Plan your launch announcement']).map(function(t,i){return '<div class="box" style="display:flex;gap:14px;align-items:center;padding:16px"><span class="num" style="width:32px;height:32px;font-size:13px">'+(i+1)+'</span><b>'+t+'</b></div>'}).join('')+'</div><a class="btn primary" href="#home">Back to home</a>';
+  return '<section class="band"><div class="wrap" style="max-width:860px"><p class="eyebrow">Get started · step '+Math.min(st+1,4)+' of 4</p><div class="stepper">'+[0,1,2,3].map(function(i){return '<i class="'+(i<=st?'on':'')+'"></i>'}).join('')+'</div><div class="panel2">'+body+
+  (st<2?'<div class="row" style="justify-content:space-between">'+(st>0?'<button class="btn ghost sm" data-back>Back</button>':'<span class="muted" style="font-size:14px">Already have an account? <a href="#start" data-login>Log in</a></span>')+'<button class="btn primary sm" data-next '+((st===0&&!S.role)||(st===1&&!S.btype)?'disabled style="opacity:.45;cursor:not-allowed"':'')+'>Continue</button></div>':'')+'</div></div></section>';
+}
+
+/* ---------- router ---------- */
+var last='';
+function route(){
+  var h=(location.hash||'#home').slice(1),app=$('#app'),key=h;
+  if(h==='assess'){assessModal();history.replaceState(null,'',last?'#'+last:'#home');return}
+  closeModal();closeDD();$('#menu').classList.remove('mob');
+  if(h.indexOf('industry-')===0){app.innerHTML=industry(h.slice(9))}
+  else if(h.indexOf('supplier-')===0){app.innerHTML=supplier(h.slice(9));key='suppliers'}
+  else if(h==='how')app.innerHTML=how();
+  else if(h==='pricing')app.innerHTML=pricing();
+  else if(h==='marketplaces')app.innerHTML=marketplaces();
+  else if(h==='cornell')app.innerHTML=cornell();
+  else if(h==='suppliers'){app.innerHTML=suppliers();drawSup()}
+  else if(h==='about')app.innerHTML=about();
+  else if(h==='start')app.innerHTML=start();
+  else{app.innerHTML=home();key='home';h='home'}
+  document.querySelectorAll('[data-nav]').forEach(function(a){a.classList.toggle('on',a.getAttribute('data-nav')===key)});
+  if(h!==last)window.scrollTo(0,0);
+  last=h;
+  setTimeout(function(){document.querySelectorAll('.snap .bar i').forEach(function(i){i.style.width=i.getAttribute('data-w')+'%'})},150);
+}
+function rerender(){var y=scrollY;route();scrollTo(0,y)}
+document.addEventListener('click',function(e){
+  var hb=e.target.closest('[data-heat]');if(hb){HEATV=hb.getAttribute('data-heat');var hc=document.querySelector('.heat');if(hc)hc.outerHTML=heatCard();return}
+  var t=e.target.closest('[data-hiw],[data-cat],[data-rfq],[data-close],[data-toast],[data-assess],[data-role],[data-pickrole],[data-btype],[data-next],[data-back],[data-login],[data-standing],[data-place],[data-book],[data-slot]');
+  if(!t)return;
+  if(t.hasAttribute('data-hiw')){S.hiw=+t.getAttribute('data-hiw');rerender();var p=$('.panel2');if(p&&innerWidth<900)p.scrollIntoView({behavior:'smooth'})}
+  else if(t.hasAttribute('data-cat')){S.cat=t.getAttribute('data-cat');rerender()}
+  else if(t.hasAttribute('data-rfq')){rfqModal(t.getAttribute('data-rfq'))}
+  else if(t.hasAttribute('data-close')){closeModal()}
+  else if(t.hasAttribute('data-toast')){toast(t.getAttribute('data-toast'))}
+  else if(t.hasAttribute('data-assess')){e.preventDefault();assessModal()}
+  else if(t.hasAttribute('data-slot')){document.querySelectorAll('[data-slot]').forEach(function(b){b.classList.remove('on')});t.classList.add('on')}
+  else if(t.hasAttribute('data-book')){closeModal();toast('Demo: assessment booked. Nothing was actually sent.')}
+  else if(t.hasAttribute('data-login')){e.preventDefault();toast('Demo: this would open the sign-in page (one email field, one-time code).')}
+  else if(t.hasAttribute('data-role')){S.role=t.getAttribute('data-role');S.signStep=1;S.btype='';if(location.hash==='#start')rerender()}
+  else if(t.hasAttribute('data-pickrole')){S.role=t.getAttribute('data-pickrole');S.btype='';rerender()}
+  else if(t.hasAttribute('data-btype')){S.btype=t.getAttribute('data-btype');rerender()}
+  else if(t.hasAttribute('data-next')){S.signStep++;rerender()}
+  else if(t.hasAttribute('data-back')){S.signStep--;rerender()}
+  else if(t.hasAttribute('data-standing')){toast('Demo: standing order set up — weekly, starting next delivery day.')}
+  else if(t.hasAttribute('data-place')){var tot=$('#ototal').textContent;toast(tot==='$0.00'?'Add quantities first.':'Demo: order for '+tot+' sent to the supplier.')}
+});
+$('#scrim').addEventListener('click',function(e){if(e.target===this)closeModal()});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeModal();closeDD()}});
+document.addEventListener('input',function(e){
+  if(e.target.id==='ord'){S.order=+e.target.value;$('#calcout').innerHTML=calcOut();$('#calcbars').innerHTML=calcBars()}
+  else if(e.target.id==='sq'){S.q=e.target.value;drawSup()}
+  else if(e.target.hasAttribute('data-line')){var s=SUPI[location.hash.slice(10)]||SUP[0],t=0;document.querySelectorAll('[data-line]').forEach(function(inp){var q=+inp.value||0,l=s.lines[+inp.getAttribute('data-line')];t+=q*(q>=10?l[3]:l[2])});$('#ototal').textContent=money(t)}
+});
+document.addEventListener('submit',function(e){e.preventDefault();
+  if(e.target.id==='rfqform'){closeModal();toast('Demo: quote request sent. Nothing was actually sent.')}
+  if(e.target.id==='signform'){S.signStep=3;rerender()}
+});
+window.addEventListener('hashchange',function(){if(location.hash==='#start'&&!S.role)S.signStep=0;route()});
+if(location.hash==='#start')S.signStep=0;
+route();
+</script>
+</body>
+</html>
